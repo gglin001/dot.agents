@@ -20,6 +20,7 @@ Use `.agents/loop/state.md` as durable mission state.
 - `Evidence` stores commands, outcomes, failures, and observations worth keeping.
 - `Next Options` are candidates, not a strict priority queue.
 - Rewrite stale strategy or options freely when new evidence proves them wrong.
+- Use `.agents/loop/state.template.md` only as a reference shape when `state.md` must be rebuilt.
 
 ## Role Boundary
 

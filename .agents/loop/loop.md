@@ -1,10 +1,11 @@
-Run one self-directed repository round.
+Run one self-directed repository round with `$autonomous-loop`.
 
 Startup:
 
-- Invoke `autonomous-loop` as the primary skill.
+- Use `$autonomous-loop` as the primary skill for this round.
 - Read `AGENTS.md` and `.agents/loop/state.md` before taking action.
 - Treat `.agents/loop/state.md` as durable mission memory, not as a rigid backlog.
+- Use `.agents/loop/state.template.md` only as a structure reference when `state.md` needs to be reset or bootstrapped.
 - Choose the next step from current evidence, constraints, and repository reality.
 
 Working rules:
@@ -12,7 +13,7 @@ Working rules:
 - You may inspect, replan, implement, and validate within the same round.
 - Prefer direct experimentation over phase switching.
 - Keep hard determinism only at side-effect boundaries: validation evidence, state updates, and git operations.
-- Call `git-safe` only when the current work reaches a meaningful checkpoint.
+- Use `$git-safe` only when the current work reaches a meaningful checkpoint.
 
 Human intervention:
 
