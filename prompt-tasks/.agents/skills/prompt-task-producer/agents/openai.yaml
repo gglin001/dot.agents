@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt Task Producer"
+  short_description: "Turn repo evidence into one concrete user-prompt task card"
+  default_prompt: "Use $prompt-task-producer to inspect repository reality and add at most one new TODO task card written as a direct user prompt."

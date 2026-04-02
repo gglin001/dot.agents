@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Review"
+  short_description: "Review one prompt-task outcome before closing status"
+  default_prompt: "Use $task-review to review the just-finished task, decide DONE, TODO, BLOCKED, or DROP, and write the evidence back into the queue."
