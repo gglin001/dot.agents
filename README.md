@@ -2,6 +2,8 @@
 
 This repository contains practical `.agents` experiments and patterns. Its goal is to build agent harnesses that enable coding agents such as Codex, Claude Code, and Gemini CLI to support continuous, unsupervised development.
 
+Repository-level development and maintenance rules live in `AGENTS.md`.
+
 ## Experiments
 
 - `autonomous-loop`: a self-directed loop that chooses the next move from durable repository state and current evidence.

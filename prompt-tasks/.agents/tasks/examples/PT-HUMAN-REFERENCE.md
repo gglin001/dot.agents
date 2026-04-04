@@ -10,7 +10,7 @@ This file is an example only. Do not add it to the live queue unless you intenti
 - Depends On: `none`
 - Related Tasks: `none`
 - Blocked By: `none`
-- Repo Scope: `prompt-tasks/README.md`, `prompt-tasks/AGENTS.md`, `prompt-tasks/tasks/`
+- Repo Scope: `README.md`, `.agents/prompt-tasks-contract.md`, `.agents/tasks/`
 - Validation: `Read the docs and confirm that a producer and consumer can both locate the queue contract, task lifecycle, and shared files without extra explanation.`
 - Exit Criteria: `The queue contract, role split, statuses, and task card format are all documented in one discoverable path.`
 - Created At: `2026-04-02`
@@ -20,7 +20,7 @@ This file is an example only. Do not add it to the live queue unless you intenti
 
 Document the `prompt-tasks` workflow so that a producer agent, a consumer agent, and a human operator can all locate the same queue contract without relying on implicit knowledge.
 
-Touch only the workflow docs and task metadata under `prompt-tasks/`. Do not turn this into a code change outside the harness.
+Touch only the workflow docs and task metadata under `.agents/`. Do not turn this into a code change outside the harness.
 
 Make sure the documentation explains:
 
@@ -41,13 +41,13 @@ Record any queue design tradeoff that a later producer or consumer should know.
 
 ## Delivery Notes
 
-- The contract was centered around `prompt-tasks/AGENTS.md` for role and status rules.
-- `prompt-tasks/README.md` documents the rationale, runtime model, and layout.
-- The queue template and shared files live under `prompt-tasks/tasks/`.
+- The contract was centered around `.agents/prompt-tasks-contract.md` for role and status rules.
+- `README.md` documents the rationale, runtime model, and layout.
+- The queue template and shared files live under `.agents/tasks/`.
 
 ## Review Record
 
 - Reviewer: `human`
 - Decision: `DONE`
-- Evidence: `README.md`, `AGENTS.md`, and the task template all point to the same queue contract and status model.
+- Evidence: `README.md`, `.agents/prompt-tasks-contract.md`, and the task template all point to the same queue contract and status model.
 - Follow-up: `Add repository-specific seed tasks once a real target repo and validation target exist.`

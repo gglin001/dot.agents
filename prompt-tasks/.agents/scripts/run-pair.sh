@@ -30,10 +30,10 @@ cleanup() {
 
 trap cleanup INT TERM EXIT
 
-(cd "$PRODUCER_WORKDIR" && prompt-tasks/scripts/run-producer-loop.sh) &
+(cd "$PRODUCER_WORKDIR" && .agents/scripts/run-producer-loop.sh) &
 producer_pid=$!
 
-(cd "$CONSUMER_WORKDIR" && prompt-tasks/scripts/run-consumer-loop.sh) &
+(cd "$CONSUMER_WORKDIR" && .agents/scripts/run-consumer-loop.sh) &
 consumer_pid=$!
 
 wait "$producer_pid" "$consumer_pid"

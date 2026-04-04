@@ -4,9 +4,18 @@
 
 Unlike [`autonomous-loop`](../autonomous-loop/README.md), it does not ask the agent to decide "what should I do next?" from open-ended repository evidence. It asks one agent to write the next task as if a human had written a concrete `user prompt`, then asks another agent to execute exactly one such task end to end.
 
+This `dot.agents` repository is a collection of harness experiments. In real usage, copy `prompt-tasks/.agents/` into a target project repository and run everything there.
+
+## CWD and Copy Model
+
+- Runtime CWD is the target project root that contains `.agents/`.
+- All queue files, loop prompts, skills, and scripts live under `.agents/`.
+- `prompt-tasks/README.md` is reference documentation only.
+- The operating contract lives in `.agents/prompt-tasks-contract.md`.
+
 ## Core Model
 
-- One shared `prompt-tasks/tasks/` directory is the durable interface between human operators, the producer loop, and the consumer loop.
+- One shared `.agents/tasks/` directory is the durable interface between human operators, the producer loop, and the consumer loop.
 - Every task card is written as a direct `user prompt` to an implementation agent.
 - The producer understands repository reality and turns that reality into one more concrete task card.
 - The consumer selects one `TODO` task, implements it, validates it, reviews it, and only then decides the final task status.
@@ -40,88 +49,94 @@ The consumer must not move a task straight from coding to `DONE` without running
 
 ## Shared Files
 
-- `prompt-tasks/AGENTS.md`: role boundaries, queue contract, state rules
-- `prompt-tasks/tasks/context.md`: project-level goals, constraints, and quality signals shared by all rounds
-- `prompt-tasks/tasks/index.md`: canonical task list
-- `prompt-tasks/tasks/notes.md`: dated queue, implementation, and review notes that do not belong to only one task
-- `prompt-tasks/tasks/templates/task.template.md`: template for both human-written and producer-written task cards
+- `.agents/prompt-tasks-contract.md`: role boundaries, queue contract, state rules
+- `.agents/tasks/context.md`: project-level goals, constraints, and quality signals shared by all rounds
+- `.agents/tasks/index.md`: canonical task list
+- `.agents/tasks/notes.md`: dated queue, implementation, and review notes that do not belong to only one task
+- `.agents/tasks/templates/task.template.md`: template for both human-written and producer-written task cards
 
 ## Directory Layout
 
 ```text
 prompt-tasks/
-├── AGENTS.md
 ├── README.md
-├── .agents/
-│   ├── loop/
-│   │   ├── producer.md
-│   │   └── consumer.md
-│   └── skills/
-│       ├── prompt-task-producer/
-│       ├── prompt-task-consumer/
-│       ├── task-review/
-│       └── git-safe/
-├── scripts/
-│   ├── bootstrap-worktrees.sh
-│   ├── run-producer-loop.sh
-│   ├── run-consumer-loop.sh
-│   └── run-pair.sh
-└── tasks/
-    ├── context.md
-    ├── index.md
-    ├── notes.md
-    ├── examples/
-    └── templates/
+└── .agents/
+    ├── prompt-tasks-contract.md
+    ├── loop/
+    │   ├── producer.md
+    │   └── consumer.md
+    ├── skills/
+    │   ├── prompt-task-producer/
+    │   ├── prompt-task-consumer/
+    │   ├── task-review/
+    │   └── git-safe/
+    ├── scripts/
+    │   ├── bootstrap-worktrees.sh
+    │   ├── run-producer-loop.sh
+    │   ├── run-consumer-loop.sh
+    │   └── run-pair.sh
+    └── tasks/
+        ├── context.md
+        ├── index.md
+        ├── notes.md
+        ├── examples/
+        └── templates/
 ```
 
 ## Safe Runtime Model
 
-Running two loops against the exact same working tree is fragile. Both agents need the same `tasks/` directory, but they do not need the same live filesystem instance.
+Running two loops against the exact same working tree is fragile. Both agents need the same `.agents/tasks/` directory, but they do not need the same live filesystem instance.
 
 The recommended model is:
 
 1. create two worktrees or clones of the same repository
 2. run the producer loop in one worktree
 3. run the consumer loop in the other worktree
-4. use the shared git history plus `tasks/` files as the durable synchronization layer
+4. use the shared git history plus `.agents/tasks/` files as the durable synchronization layer
 
 This is why `prompt-tasks` includes a git finalization skill that stages the intended checkpoint, syncs linearly, and only resolves conflicts that are genuinely part of the current task.
 
 ## Quick Start
 
-Bootstrap two worktrees:
+Copy `.agents/` into your target project repository:
 
 ```bash
-prompt-tasks/scripts/bootstrap-worktrees.sh
+cp -R /path/to/dot.agents/prompt-tasks/.agents /path/to/target-project/.agents
+```
+
+Then run in the target project root:
+
+```bash
+.agents/scripts/bootstrap-worktrees.sh
 ```
 
 Then run the producer loop in the producer worktree:
 
 ```bash
-cd ../dot.agents-producer
-prompt-tasks/scripts/run-producer-loop.sh
+cd ../<repo-name>-producer
+.agents/scripts/run-producer-loop.sh
 ```
 
 And the consumer loop in the consumer worktree:
 
 ```bash
-cd ../dot.agents-consumer
-prompt-tasks/scripts/run-consumer-loop.sh
+cd ../<repo-name>-consumer
+.agents/scripts/run-consumer-loop.sh
 ```
 
 Or launch both after you set two distinct worktree paths:
 
 ```bash
-PRODUCER_WORKDIR=../dot.agents-producer \
-CONSUMER_WORKDIR=../dot.agents-consumer \
-prompt-tasks/scripts/run-pair.sh
+PRODUCER_WORKDIR=../<repo-name>-producer \
+CONSUMER_WORKDIR=../<repo-name>-consumer \
+.agents/scripts/run-pair.sh
 ```
 
 ## Human Bootstrapping
 
-In the early phase of a project, humans should add task cards directly. Those cards become the reference examples for tone, granularity, and acceptance criteria. Over time, the producer should learn the local style by imitating the best human-authored prompts already present in `prompt-tasks/tasks/`.
+In the early phase of a project, humans should add task cards directly. Those cards become the reference examples for tone, granularity, and acceptance criteria. Over time, the producer should learn the local style by imitating the best human-authored prompts already present in `.agents/tasks/`.
 
-`prompt-tasks/tasks/examples/PT-HUMAN-REFERENCE.md` shows the intended shape of such a task card.
+`.agents/tasks/examples/PT-HUMAN-REFERENCE.md` shows the intended shape of such a task card.
 
 ## Relationship to `autonomous-loop`
 

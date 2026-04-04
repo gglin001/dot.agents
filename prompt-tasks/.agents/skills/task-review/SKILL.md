@@ -41,11 +41,11 @@ description: "Review a just-implemented prompt task with a code-review mindset, 
 
 - Choose exactly one final status.
 - Write the reason in `Review Record`.
-- Update both the task card and the matching queue line in `prompt-tasks/tasks/index.md`.
+- Update both the task card and the matching queue line in `.agents/tasks/index.md`.
 
 ### 4. Preserve cross-task knowledge
 
-- If review discovered a reusable fact, append it to `prompt-tasks/tasks/notes.md`.
+- If review discovered a reusable fact, append it to `.agents/tasks/notes.md`.
 - If review exposed follow-up work, link it explicitly rather than relying on memory.
 
 ## Guardrails

@@ -36,6 +36,6 @@ Producer worktree: $PRODUCER_DIR
 Consumer worktree: $CONSUMER_DIR
 
 Next steps:
-  cd "$PRODUCER_DIR" && prompt-tasks/scripts/run-producer-loop.sh
-  cd "$CONSUMER_DIR" && prompt-tasks/scripts/run-consumer-loop.sh
+  cd "$PRODUCER_DIR" && .agents/scripts/run-producer-loop.sh
+  cd "$CONSUMER_DIR" && .agents/scripts/run-consumer-loop.sh
 EOF

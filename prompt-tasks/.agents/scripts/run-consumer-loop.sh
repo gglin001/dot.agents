@@ -3,8 +3,8 @@
 set -eu
 
 REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
-PROMPT_FILE="$REPO_ROOT/prompt-tasks/.agents/loop/consumer.md"
-LOG_DIR=${LOG_DIR:-"$REPO_ROOT/prompt-tasks/debug"}
+PROMPT_FILE="$REPO_ROOT/.agents/loop/consumer.md"
+LOG_DIR=${LOG_DIR:-"$REPO_ROOT/.agents/debug"}
 LOG_FILE=${LOG_FILE:-"$LOG_DIR/consumer.log"}
 CODEX_BIN=${CODEX_BIN:-codex}
 ROUNDS=${ROUNDS:-50}
