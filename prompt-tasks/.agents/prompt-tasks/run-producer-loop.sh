@@ -3,9 +3,8 @@
 set -eu
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-REPO_ROOT=$(cd "$SCRIPT_DIR/../../.." && pwd)
-HARNESS_ROOT="$REPO_ROOT/.agents/prompt-tasks"
-PROMPT_FILE="$HARNESS_ROOT/loop/producer.md"
+HARNESS_ROOT="$SCRIPT_DIR"
+PROMPT_FILE="$HARNESS_ROOT/producer.md"
 LOG_DIR=${LOG_DIR:-"$HARNESS_ROOT/debug"}
 LOG_FILE=${LOG_FILE:-"$LOG_DIR/producer.log"}
 CODEX_BIN=${CODEX_BIN:-codex}

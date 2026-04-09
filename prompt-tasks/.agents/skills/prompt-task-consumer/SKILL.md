@@ -7,7 +7,7 @@ description: "Select one TODO task card, implement it end to end, validate it, t
 
 ## Use When
 
-- Running `.agents/prompt-tasks/loop/consumer.md`
+- Running `.agents/prompt-tasks/consumer.md`
 - The queue already contains concrete `TODO` tasks
 - One focused implementation round should be executed from an explicit task card
 

@@ -22,8 +22,8 @@ The goal is simple: keep autonomous work deterministic at the task boundary.
 - `.agents/prompt-tasks/tasks/index.md`: canonical queue.
 - `.agents/prompt-tasks/tasks/notes.md`: cross-task dated facts.
 - `.agents/prompt-tasks/tasks/templates/task.template.md`: task card template.
-- `.agents/prompt-tasks/loop/producer.md`: producer loop prompt.
-- `.agents/prompt-tasks/loop/consumer.md`: consumer loop prompt.
+- `.agents/prompt-tasks/producer.md`: producer loop prompt.
+- `.agents/prompt-tasks/consumer.md`: consumer loop prompt.
 
 ## Task Flow
 
@@ -46,12 +46,12 @@ Run producer and consumer in two separate local checkouts(prefer):
 
 ```bash
 cd /path/to/target-project-producer
-.agents/prompt-tasks/scripts/run-producer-loop.sh
+.agents/prompt-tasks/run-producer-loop.sh
 ```
 
 ```bash
 cd /path/to/target-project-consumer
-.agents/prompt-tasks/scripts/run-consumer-loop.sh
+.agents/prompt-tasks/run-consumer-loop.sh
 ```
 
 ## Practical Notes

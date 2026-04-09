@@ -7,7 +7,7 @@ description: "Inspect repository reality, then add at most one new task card wri
 
 ## Use When
 
-- Running `.agents/prompt-tasks/loop/producer.md`
+- Running `.agents/prompt-tasks/producer.md`
 - Expanding or refining the queue from actual repository evidence
 - Human-authored task cards should be imitated and extended
 
