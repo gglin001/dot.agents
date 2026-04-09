@@ -19,7 +19,7 @@ description: "Select one TODO task card, implement it end to end, validate it, t
 
 ## Inputs
 
-- `.agents/prompt-tasks/prompt-tasks-contract.md`
+- `.agents/prompt-tasks/contract.md`
 - `.agents/prompt-tasks/tasks/context.md`
 - `.agents/prompt-tasks/tasks/index.md`
 - one chosen `.agents/prompt-tasks/tasks/PT-*.md` task card

@@ -2,7 +2,7 @@ Run one prompt-task consumption round with `$prompt-task-consumer`.
 
 Startup:
 
-- Read `.agents/prompt-tasks/prompt-tasks-contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
+- Read `.agents/prompt-tasks/contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
 - Inspect `git status --short` and any repo files needed to understand the chosen task.
 - Sync your understanding of task relationships before claiming work.
 

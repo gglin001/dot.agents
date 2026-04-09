@@ -21,7 +21,7 @@ description: "Inspect repository reality, then add at most one new task card wri
 
 ## Inputs
 
-- `.agents/prompt-tasks/prompt-tasks-contract.md`
+- `.agents/prompt-tasks/contract.md`
 - `.agents/prompt-tasks/tasks/context.md`
 - `.agents/prompt-tasks/tasks/index.md`
 - `.agents/prompt-tasks/tasks/notes.md`
@@ -32,7 +32,7 @@ description: "Inspect repository reality, then add at most one new task card wri
 When you create a new task:
 
 - create one `.agents/prompt-tasks/tasks/PT-<date>-<random>.md` card
-- initialize it from `.agents/prompt-tasks/tasks/templates/task.template.md`
+- initialize it from `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`
 - set `Status: TODO`
 - write a concrete `User Prompt` section with scope, constraints, validation, and expected evidence
 - update `.agents/prompt-tasks/tasks/index.md` in the same round

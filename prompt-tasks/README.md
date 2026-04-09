@@ -17,11 +17,11 @@ The goal is simple: keep autonomous work deterministic at the task boundary.
 
 ## Core Files
 
-- `.agents/prompt-tasks/prompt-tasks-contract.md`: role boundaries and queue rules.
+- `.agents/prompt-tasks/contract.md`: role boundaries and queue rules.
 - `.agents/prompt-tasks/tasks/context.md`: project-level goals and constraints.
 - `.agents/prompt-tasks/tasks/index.md`: canonical queue.
 - `.agents/prompt-tasks/tasks/notes.md`: cross-task dated facts.
-- `.agents/prompt-tasks/tasks/templates/task.template.md`: task card template.
+- `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`: task card template.
 - `.agents/prompt-tasks/producer.md`: producer loop prompt.
 - `.agents/prompt-tasks/consumer.md`: consumer loop prompt.
 
@@ -58,4 +58,4 @@ cd /path/to/target-project-consumer
 
 - Treat git history plus `.agents/prompt-tasks/tasks/` as the synchronization layer.
 - Human-authored cards are valid first-class inputs.
-- Example card: `.agents/prompt-tasks/tasks/examples/PT-HUMAN-REFERENCE.md`.
+- Example card: `.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md`.

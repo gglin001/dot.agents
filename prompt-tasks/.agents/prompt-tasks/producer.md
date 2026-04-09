@@ -2,14 +2,14 @@ Run one prompt-task production round with `$prompt-task-producer`.
 
 Startup:
 
-- Read `.agents/prompt-tasks/prompt-tasks-contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
+- Read `.agents/prompt-tasks/contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
 - Inspect `git status --short` and whatever repository files, tests, or docs are necessary to understand current gaps or progress.
-- Use human-authored task cards under `.agents/prompt-tasks/tasks/` and `.agents/prompt-tasks/tasks/examples/` as reference style.
+- Use human-authored task cards under `.agents/prompt-tasks/tasks/`, including `.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md`, as reference style.
 
 Responsibilities:
 
 - Decide whether repository reality justifies one more task card right now.
-- If yes, create exactly one new `.agents/prompt-tasks/tasks/PT-<date>-<random>.md` file from `.agents/prompt-tasks/tasks/templates/task.template.md`.
+- If yes, create exactly one new `.agents/prompt-tasks/tasks/PT-<date>-<random>.md` file from `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`.
 - Write the task as a direct `user prompt` to an implementation agent.
 - Include concrete repo scope, validation target, exit criteria, current assumptions, and task relationships.
 - Add or update the matching line in `.agents/prompt-tasks/tasks/index.md` with initial status `TODO`.
