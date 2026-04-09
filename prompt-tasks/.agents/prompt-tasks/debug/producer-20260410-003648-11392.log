@@ -1,0 +1,1901 @@
+--- Fri Apr 10 00:36:48 CST 2026 : Starting producer iteration 1 / 1 ---
+OpenAI Codex v0.118.0 (research preview)
+--------
+workdir: /Users/allen/repos/_blog/dot.agents/prompt-tasks
+model: gpt-5.3-codex
+provider: mirror
+approval: never
+sandbox: danger-full-access
+reasoning effort: xhigh
+reasoning summaries: detailed
+session id: 019d731a-7bfd-7a42-ae25-6d838617abe6
+--------
+user
+Run one prompt-task production round with `$prompt-task-producer`.
+
+Startup:
+
+- Read `.agents/prompt-tasks/contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
+- Inspect `git status --short` plus the relevant repository files, tests, and docs needed to judge current gaps.
+- Use human-authored task cards under `.agents/prompt-tasks/tasks/`, including `.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md`, as style references.
+
+Round objective:
+
+- Create exactly one new actionable `TODO` card, or
+- Record a no-growth decision with a dated note in `.agents/prompt-tasks/tasks/notes.md`.
+
+Constraints:
+
+- Follow the producer role contract in `.agents/prompt-tasks/contract.md`.
+- Do not implement product code in this round.
+- Create at most one new task card.
+- If queue artifacts changed meaningfully, finalize the checkpoint with `$git-safe`.
+
+Stop conditions:
+
+- one concrete task card was created
+- or a no-growth queue note was recorded
+- or the round is blocked by missing repository context that cannot be recovered locally
+
+Return sections in this order:
+
+1. Queue Summary
+2. Work Performed
+3. Evidence
+4. Queue Updates
+5. Git Finalization
+6. Next Suggestion
+codex
+Running a single producer round now using `prompt-task-producer`, and I will apply `git-safe` only if queue artifacts change. First, I am loading the required contract/context/index/notes files plus current git status to determine whether to add one `TODO` task or log a no-growth note.
+exec
+/bin/zsh -lc 'git status --short' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+?? prompts-repo-dot.agents-prompt-tasks-0.md
+
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/notes.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/context.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/index.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/contract.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+# Shared Notes
+
+Append short dated bullets. Keep this file factual and cross-task.
+
+## Queue Notes
+
+- _Empty._
+
+## Implementation Findings
+
+- _Empty._
+
+## Review Findings
+
+- _Empty._
+
+ succeeded in 0ms:
+# Shared Context
+
+Use this file for project-level facts that should survive individual task turnover.
+Keep role workflow and status rules in `.agents/prompt-tasks/contract.md`, not here.
+
+## Goal Snapshot
+
+- Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.
+
+## Non-Negotiables
+
+- Task cards must be concrete enough that one consumer round can execute without guessing hidden intent.
+- Queue growth must be justified by repository evidence, not by backlog vanity.
+- Delivery and review evidence must be durable for later rounds.
+
+## Quality Signals
+
+- Fill in repository-specific failing tests, coverage gaps, release criteria, or performance targets here.
+
+## Known Constraints
+
+- Fill in read-only areas, slow validation paths, external dependencies, or deployment constraints here.
+
+## Global Risks
+
+- Queue bloat: the producer creates speculative or overlapping tasks.
+- Hidden dependency: a task looks local but depends on unfinished work elsewhere.
+- Review drift: the consumer marks `DONE` without sufficient evidence.
+- Git churn: producer and consumer update the same queue files from different worktrees without clear checkpoint boundaries.
+
+## Active Priorities
+
+- Fill in top repository priorities that should shape near-term task selection.
+
+## Operator Notes
+
+- Human-authored task cards remain the reference style until enough high-quality producer cards exist.
+
+ succeeded in 0ms:
+# Task Index
+
+This is the canonical shared task list. Update the task card and the matching line here in the same round.
+
+Line format:
+
+- `ID` | `STATUS` | title: ... | goal: ... | depends: ... | related: ... | updated: YYYY-MM-DD | file: `.agents/prompt-tasks/tasks/...`
+
+## Tasks
+
+- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
+
+ succeeded in 0ms:
+# prompt-tasks Operating Contract
+
+This file is the single source of truth for prompt-tasks behavior.
+If any instruction in `producer.md`, `consumer.md`, or skill docs conflicts with this file, this file wins.
+
+## Canonical Runtime Files
+
+- `.agents/prompt-tasks/contract.md`: normative workflow and state rules
+- `.agents/prompt-tasks/tasks/context.md`: project facts, goals, constraints, and risks
+- `.agents/prompt-tasks/tasks/index.md`: canonical queue, one line per live task card
+- `.agents/prompt-tasks/tasks/notes.md`: dated cross-task facts
+- `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`: task card template
+
+## Shared Truth
+
+- Every live task card has exactly one matching queue line in `index.md`.
+- Every queue line maps to exactly one task card in `.agents/prompt-tasks/tasks/`.
+- Human-authored task cards are authoritative examples of local style and intent.
+- `context.md` stores project facts, not role workflow rules.
+
+## Status Model
+
+Durable outcomes:
+
+- `TODO`
+- `DONE`
+- `DROP`
+
+Working states:
+
+- `DOING`
+- `REVIEW`
+- `BLOCKED`
+
+State definitions:
+
+- `TODO`: actionable now by a consumer.
+- `DOING`: claimed by one consumer and actively in progress.
+- `REVIEW`: implementation reached a decision point, review not finalized yet.
+- `BLOCKED`: still relevant, currently not actionable due to a concrete blocker.
+- `DONE`: exit criteria met, validation evidence present, review accepted.
+- `DROP`: task is obsolete, duplicate, or based on a wrong premise.
+
+## Task Card Contract
+
+Required fields near the top:
+
+- `ID`
+- `Title`
+- `Status`
+- `Source`
+- `Parent Goal`
+- `Depends On`
+- `Related Tasks`
+- `Blocked By`
+- `Repo Scope`
+- `Validation`
+- `Exit Criteria`
+- `Created At`
+- `Updated At`
+
+Required sections:
+
+- `User Prompt`
+- `Context Snapshot`
+- `Delivery Notes`
+- `Review Record`
+
+Field semantics:
+
+- `Depends On` is for hard sequencing requirements.
+- `Related Tasks` is for non-blocking links that affect reasoning.
+- `Blocked By` must name the concrete blocker, not a vague statement.
+- `User Prompt` must read as a direct instruction from a human operator.
+
+## Role Contracts
+
+### Producer Round
+
+Round objective:
+
+- create at most one new actionable task card, or
+- append one no-growth note to `notes.md` with a concrete reason.
+
+Required steps:
+
+1. Read `contract.md`, `context.md`, `index.md`, and `notes.md`.
+2. Inspect repository reality before deciding queue changes.
+3. Prefer refining task relations over creating overlapping work.
+4. If creating a task, create exactly one `PT-<date>-<random>.md` from template, set `Status: TODO`, write a concrete `User Prompt`, and update `index.md` in the same round.
+5. If not creating a task, append a dated reason to `notes.md`.
+6. If queue artifacts changed meaningfully, checkpoint with `$git-safe`.
+
+Producer constraints:
+
+- Do not implement product code.
+- Do not create speculative wishlist tasks.
+- Do not create more than one new task card per round.
+
+### Consumer Round
+
+Round objective:
+
+- execute one actionable `TODO` task end to end, then hand the decision to review.
+
+Required steps:
+
+1. Read `contract.md`, `context.md`, `index.md`, and `notes.md`.
+2. Select one actionable `TODO` task with no unmet hard dependency.
+3. Claim it by setting `Status: DOING` in both the task card and `index.md`.
+4. Implement within declared scope, or record scope spillover explicitly.
+5. Run the task validation path, or document exactly why it could not run.
+6. Run review in the same round and let review decide the final state.
+7. If queue or code changed meaningfully, checkpoint with `$git-safe`.
+
+Consumer constraints:
+
+- Do not pick multiple tasks in one round.
+- Do not mark `DONE` without review evidence.
+- Do not hide dependency discoveries or relation updates.
+
+### Review Round
+
+Round objective:
+
+- accept or reject closure quality with evidence.
+
+Required steps:
+
+1. Re-read the task card contract: `Repo Scope`, `Validation`, `Exit Criteria`, relations.
+2. Inspect changed files and validation evidence against the card.
+3. Choose exactly one outcome: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+4. Write rationale and evidence into `Review Record`.
+5. Sync final status in both the task card and `index.md`.
+6. Append reusable cross-task facts to `notes.md` when relevant.
+
+Review constraints:
+
+- No rubber-stamping.
+- No `DONE` with missing or contradictory validation evidence.
+- No queue and card status divergence.
+
+## Queue Quality Rules
+
+- One task should fit one focused consumer round.
+- Prefer one main repo slice, one primary validation path, and one intended checkpoint.
+- Explain why the task matters to `Parent Goal`.
+- Keep dependency links explicit.
+- Keep backlog density high; avoid speculative growth.
+
+## Concurrency and Git
+
+- Preferred operating model: separate producer and consumer worktrees.
+- Shared synchronization layer: git history plus `.agents/prompt-tasks/tasks/`.
+- Resolve only conflicts related to the current checkpoint.
+- If a conflict changes task semantics and cannot be resolved confidently, stop and report.
+
+## Human Override
+
+- Humans may edit queue order, card content, priorities, and statuses at any time.
+- Human edits to task cards or `context.md` are authoritative.
+- If human edits conflict with an in-flight round, preserve human intent and narrow the round scope.
+
+codex
+I loaded the required queue state files; the queue is currently empty, and there is one unrelated untracked file in the worktree. Next, I am inspecting the harness docs and human reference cards to identify one concrete gap worth turning into the first actionable task card.
+exec
+/bin/zsh -lc 'ls -la .agents/prompt-tasks/tasks' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+total 40
+drwxr-xr-x@ 7 allen  staff   224 Apr 10 00:05 .
+drwxr-xr-x@ 9 allen  staff   288 Apr 10 00:03 ..
+-rw-r--r--@ 1 allen  staff  2597 Apr 10 00:03 PT-HUMAN-REFERENCE.md
+-rw-r--r--@ 1 allen  staff  1088 Apr 10 00:03 PT-YYYYMMDD-TEMPLATE.md
+-rw-r--r--@ 1 allen  staff  1434 Apr 10 00:14 context.md
+-rw-r--r--@ 1 allen  staff   373 Apr 10 00:05 index.md
+-rw-r--r--@ 1 allen  staff   183 Apr 10 00:05 notes.md
+
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+# Example Task Card
+
+This file is an example only. Do not add it to the live queue unless you intentionally want to execute it.
+
+- ID: `PT-20260402-human-reference`
+- Title: `Document the prompt-tasks queue contract`
+- Status: `DONE`
+- Source: `human`
+- Parent Goal: `Bootstrap prompt-driven autonomous development in this repository`
+- Depends On: `none`
+- Related Tasks: `none`
+- Blocked By: `none`
+- Repo Scope: `README.md`, `.agents/prompt-tasks/contract.md`, `.agents/prompt-tasks/tasks/`
+- Validation: `Read the docs and confirm that a producer and consumer can both locate the queue contract, task lifecycle, and shared files without extra explanation.`
+- Exit Criteria: `The queue contract, role split, statuses, and task card format are all documented in one discoverable path.`
+- Created At: `2026-04-02`
+- Updated At: `2026-04-02`
+
+## User Prompt
+
+Document the `prompt-tasks` workflow so that a producer agent, a consumer agent, and a human operator can all locate the same queue contract without relying on implicit knowledge.
+
+Touch only the workflow docs and task metadata under `.agents/`. Do not turn this into a code change outside the harness.
+
+Make sure the documentation explains:
+
+- where the shared queue lives
+- which role writes tasks and which role executes them
+- why review decides the final task status
+- how `TODO`, `DONE`, and `DROP` relate to the extra working states
+
+Validation is documentation-based: after editing, re-read the docs as if you were a new operator and check that the answer to each question above is explicit.
+
+Record any queue design tradeoff that a later producer or consumer should know.
+
+## Context Snapshot
+
+- Current repo fact: the repository already contains `autonomous-loop`, which chooses work from durable state rather than from an explicit queue.
+- Current quality signal: this new harness needs a visible contract before autonomous rounds can use it consistently.
+- Risk or assumption: if the contract is spread across too many files, the producer and consumer will drift.
+
+## Delivery Notes
+
+- The contract was centered around `.agents/prompt-tasks/contract.md` for role and status rules.
+- `README.md` documents the rationale, runtime model, and layout.
+- The queue template and shared files live under `.agents/prompt-tasks/tasks/`.
+
+## Review Record
+
+- Reviewer: `human`
+- Decision: `DONE`
+- Evidence: `README.md`, `.agents/prompt-tasks/contract.md`, and the task template all point to the same queue contract and status model.
+- Follow-up: `Add repository-specific seed tasks once a real target repo and validation target exist.`
+
+ succeeded in 0ms:
+# Task Card
+
+- ID: `PT-YYYYMMDD-random`
+- Title: `<short imperative title>`
+- Status: `TODO`
+- Source: `human` | `producer`
+- Parent Goal: `<which repository goal this task advances>`
+- Depends On: `none` | `PT-...`
+- Related Tasks: `none` | `PT-..., PT-...`
+- Blocked By: `none` | `external` | `PT-...`
+- Repo Scope: `<paths, modules, tests, or docs>`
+- Validation: `<command, test, or manual verification path>`
+- Exit Criteria: `<what must be true before review can accept DONE>`
+- Created At: `YYYY-MM-DD`
+- Updated At: `YYYY-MM-DD`
+
+## User Prompt
+
+Write this section exactly like a human operator talking to an implementation agent.
+
+State:
+
+- the concrete change to make
+- the exact repo slice to touch
+- what not to touch when that matters
+- how to validate the result
+- what evidence or notes must be preserved
+
+## Context Snapshot
+
+- Current repo fact:
+- Current quality signal:
+- Risk or assumption:
+
+## Delivery Notes
+
+- Record key commands, files, decisions, and newly discovered task links here.
+
+## Review Record
+
+- Reviewer:
+- Decision: `PENDING`
+- Evidence:
+- Follow-up:
+
+exec
+/bin/zsh -lc 'cat README.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+# prompt-tasks
+
+`prompt-tasks` is a task-first harness for autonomous development.
+
+It splits work into two loops:
+
+- Producer: creates at most one concrete task card from repository reality.
+- Consumer: executes one `TODO` task card end to end, then hands the decision to review.
+
+The goal is simple: keep autonomous work deterministic at the task boundary.
+
+## Runtime Layout
+
+- Runtime CWD: target project root containing `.agents/`.
+- Prompt-task runtime files: `.agents/prompt-tasks/`.
+- Shared skills: `.agents/skills/`.
+
+## Core Files
+
+- `.agents/prompt-tasks/contract.md`: single source of truth for role boundaries, status model, and queue rules.
+- `.agents/prompt-tasks/tasks/context.md`: project-level goals and constraints.
+- `.agents/prompt-tasks/tasks/index.md`: canonical queue.
+- `.agents/prompt-tasks/tasks/notes.md`: cross-task dated facts.
+- `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`: task card template.
+- `.agents/prompt-tasks/producer.md`: thin producer loop entry prompt.
+- `.agents/prompt-tasks/consumer.md`: thin consumer loop entry prompt.
+- `.agents/skills/*`: role-specialized execution workflows that follow the contract.
+
+## Task Flow
+
+1. Producer reads queue and repository evidence.
+2. Producer creates at most one new task card, or records a no-op note.
+3. Consumer picks one actionable `TODO` task and marks it `DOING`.
+4. Consumer implements and validates.
+5. `task-review` decides final state: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+6. Queue and task card must stay in sync.
+
+## Quick Start
+
+Copy `.agents/` into your target repository:
+
+```bash
+cp -R /path/to/dot.agents/prompt-tasks/.agents /path/to/target-project/.agents
+```
+
+Run producer and consumer in two separate local checkouts(prefer):
+
+```bash
+cd /path/to/target-project-producer
+.agents/prompt-tasks/run-producer-loop.sh
+```
+
+```bash
+cd /path/to/target-project-consumer
+.agents/prompt-tasks/run-consumer-loop.sh
+```
+
+## Practical Notes
+
+- Treat git history plus `.agents/prompt-tasks/tasks/` as the synchronization layer.
+- Human-authored cards are valid first-class inputs.
+- Example card: `.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md`.
+
+exec
+/bin/zsh -lc 'ls -la' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+total 24
+drwxr-xr-x@ 5 allen  staff   160 Apr 10 00:30 .
+drwxr-xr-x@ 7 allen  staff   224 Apr  4 16:56 ..
+drwxr-xr-x@ 4 allen  staff   128 Apr 10 00:02 .agents
+-rw-r--r--@ 1 allen  staff  2152 Apr 10 00:20 README.md
+-rw-r--r--@ 1 allen  staff  7146 Apr 10 00:30 prompts-repo-dot.agents-prompt-tasks-0.md
+
+codex
+I reviewed the template and human reference style and now I am checking the harness scripts/prompts for concrete operator-facing gaps. The goal is to base the new task on verifiable repository evidence, not speculative backlog growth.
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/producer.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+Run one prompt-task production round with `$prompt-task-producer`.
+
+Startup:
+
+- Read `.agents/prompt-tasks/contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
+- Inspect `git status --short` plus the relevant repository files, tests, and docs needed to judge current gaps.
+- Use human-authored task cards under `.agents/prompt-tasks/tasks/`, including `.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md`, as style references.
+
+Round objective:
+
+- Create exactly one new actionable `TODO` card, or
+- Record a no-growth decision with a dated note in `.agents/prompt-tasks/tasks/notes.md`.
+
+Constraints:
+
+- Follow the producer role contract in `.agents/prompt-tasks/contract.md`.
+- Do not implement product code in this round.
+- Create at most one new task card.
+- If queue artifacts changed meaningfully, finalize the checkpoint with `$git-safe`.
+
+Stop conditions:
+
+- one concrete task card was created
+- or a no-growth queue note was recorded
+- or the round is blocked by missing repository context that cannot be recovered locally
+
+Return sections in this order:
+
+1. Queue Summary
+2. Work Performed
+3. Evidence
+4. Queue Updates
+5. Git Finalization
+6. Next Suggestion
+
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/run-producer-loop.sh' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/consumer.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+Run one prompt-task consumption round with `$prompt-task-consumer`.
+
+Startup:
+
+- Read `.agents/prompt-tasks/contract.md`, `.agents/prompt-tasks/tasks/context.md`, `.agents/prompt-tasks/tasks/index.md`, and `.agents/prompt-tasks/tasks/notes.md`.
+- Inspect `git status --short` and any repo files needed to understand the chosen task.
+- Sync your understanding of task relationships before claiming work.
+
+Round objective:
+
+- Execute exactly one actionable `TODO` task end to end.
+- Hand the final status decision to `$task-review` in the same round.
+
+Constraints:
+
+- Follow the consumer role contract in `.agents/prompt-tasks/contract.md`.
+- Do not work on multiple `TODO` tasks in one round.
+- Do not mark a task `DONE` without review evidence.
+- Do not hide scope spillover; record it explicitly in the task card and queue.
+- If no actionable `TODO` exists, append a short note to `.agents/prompt-tasks/tasks/notes.md` and stop.
+- If the round produced meaningful queue or code changes, finalize the checkpoint with `$git-safe`.
+
+Stop conditions:
+
+- one task reached a reviewed outcome
+- or the chosen task was reclassified as blocked or dropped with evidence
+- or no actionable `TODO` task exists
+
+Return sections in this order:
+
+1. Task Selection
+2. Work Performed
+3. Validation Evidence
+4. Review Outcome
+5. Git Finalization
+6. Next Suggestion
+
+ succeeded in 0ms:
+#!/usr/bin/env bash
+set -eu
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+HARNESS_ROOT="$SCRIPT_DIR"
+PROMPT_FILE="$HARNESS_ROOT/producer.md"
+LOG_DIR=${LOG_DIR:-"$HARNESS_ROOT/debug"}
+RUN_ID=${RUN_ID:-"$(date +"%Y%m%d-%H%M%S")-$$"}
+LOG_FILE=${LOG_FILE:-"$LOG_DIR/producer-${RUN_ID}.log"}
+CODEX_BIN=${CODEX_BIN:-codex}
+ROUNDS=${ROUNDS:-10}
+SLEEP_SECONDS=${SLEEP_SECONDS:-20}
+
+mkdir -p "$LOG_DIR"
+
+count=1
+while [ "$count" -le "$ROUNDS" ]; do
+  printf -- "--- %s : Starting producer iteration %s / %s ---\n" "$(date)" "$count" "$ROUNDS" | tee -a "$LOG_FILE"
+  "$CODEX_BIN" --yolo exec "$(<"$PROMPT_FILE")" 2>&1 | tee -a "$LOG_FILE"
+  count=$((count + 1))
+  sleep "$SLEEP_SECONDS"
+done
+
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/run-consumer-loop.sh' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+#!/usr/bin/env bash
+set -eu
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+HARNESS_ROOT="$SCRIPT_DIR"
+PROMPT_FILE="$HARNESS_ROOT/consumer.md"
+LOG_DIR=${LOG_DIR:-"$HARNESS_ROOT/debug"}
+RUN_ID=${RUN_ID:-"$(date +"%Y%m%d-%H%M%S")-$$"}
+LOG_FILE=${LOG_FILE:-"$LOG_DIR/consumer-${RUN_ID}.log"}
+CODEX_BIN=${CODEX_BIN:-codex}
+ROUNDS=${ROUNDS:-10}
+SLEEP_SECONDS=${SLEEP_SECONDS:-20}
+
+mkdir -p "$LOG_DIR"
+
+count=1
+while [ "$count" -le "$ROUNDS" ]; do
+  printf -- "--- %s : Starting consumer iteration %s / %s ---\n" "$(date)" "$count" "$ROUNDS" | tee -a "$LOG_FILE"
+  "$CODEX_BIN" --yolo exec "$(<"$PROMPT_FILE")" 2>&1 | tee -a "$LOG_FILE"
+  count=$((count + 1))
+  sleep "$SLEEP_SECONDS"
+done
+
+exec
+/bin/zsh -lc 'rg --files .agents' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+.agents/prompt-tasks/producer.md
+.agents/prompt-tasks/contract.md
+.agents/prompt-tasks/consumer.md
+.agents/prompt-tasks/tasks/notes.md
+.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md
+.agents/prompt-tasks/tasks/index.md
+.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md
+.agents/prompt-tasks/tasks/context.md
+.agents/prompt-tasks/run-producer-loop.sh
+.agents/prompt-tasks/run-consumer-loop.sh
+.agents/skills/prompt-task-consumer/SKILL.md
+.agents/skills/prompt-task-consumer/agents/openai.yaml
+.agents/skills/git-safe/SKILL.md
+.agents/skills/git-safe/agents/openai.yaml
+.agents/skills/task-review/SKILL.md
+.agents/skills/task-review/agents/openai.yaml
+.agents/skills/prompt-task-producer/SKILL.md
+.agents/skills/prompt-task-producer/agents/openai.yaml
+
+codex
+I have enough baseline context from the harness files and I am now checking for concrete, evidence-backed gaps in scripts and docs that can be captured as one focused consumer task. I will inspect skill configs and any obvious validation surface so the card is specific and non-duplicative.
+exec
+/bin/zsh -lc 'cat .agents/skills/prompt-task-producer/agents/openai.yaml' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+interface:
+  display_name: "Prompt Task Producer"
+  short_description: "Turn repo evidence into one concrete user-prompt task card"
+  default_prompt: "Use $prompt-task-producer for one round: follow contract rules, create at most one TODO task card, or write a no-growth queue note."
+
+exec
+/bin/zsh -lc 'cat .agents/skills/task-review/agents/openai.yaml' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/skills/git-safe/agents/openai.yaml' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/skills/prompt-task-consumer/agents/openai.yaml' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+interface:
+  display_name: "Task Review"
+  short_description: "Review one prompt-task outcome before closing status"
+  default_prompt: "Use $task-review on one task card: evaluate evidence, decide DONE/TODO/BLOCKED/DROP, and sync status in both card and index."
+
+ succeeded in 0ms:
+interface:
+  display_name: "Git Safe"
+  short_description: "Checkpoint one prompt-task change set safely"
+  default_prompt: "Use $git-safe to stage the intended prompt-task files, commit once, sync linearly, and push without force."
+
+ succeeded in 0ms:
+interface:
+  display_name: "Prompt Task Consumer"
+  short_description: "Implement one queue task and send it through review"
+  default_prompt: "Use $prompt-task-consumer for one round: claim one actionable TODO, implement and validate it, then hand final status to $task-review."
+
+exec
+/bin/zsh -lc "rg -n \"codex|shellcheck|prereq|preflight|TODO|_No tasks yet\" README.md .agents -g '"'!**/debug/**'"'" in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+README.md:8:- Consumer: executes one `TODO` task card end to end, then hands the decision to review.
+README.md:33:3. Consumer picks one actionable `TODO` task and marks it `DOING`.
+README.md:35:5. `task-review` decides final state: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+.agents/prompt-tasks/producer.md:11:- Create exactly one new actionable `TODO` card, or
+.agents/prompt-tasks/contract.md:25:- `TODO`
+.agents/prompt-tasks/contract.md:37:- `TODO`: actionable now by a consumer.
+.agents/prompt-tasks/contract.md:90:4. If creating a task, create exactly one `PT-<date>-<random>.md` from template, set `Status: TODO`, write a concrete `User Prompt`, and update `index.md` in the same round.
+.agents/prompt-tasks/contract.md:104:- execute one actionable `TODO` task end to end, then hand the decision to review.
+.agents/prompt-tasks/contract.md:109:2. Select one actionable `TODO` task with no unmet hard dependency.
+.agents/prompt-tasks/contract.md:132:3. Choose exactly one outcome: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+.agents/prompt-tasks/consumer.md:11:- Execute exactly one actionable `TODO` task end to end.
+.agents/prompt-tasks/consumer.md:17:- Do not work on multiple `TODO` tasks in one round.
+.agents/prompt-tasks/consumer.md:20:- If no actionable `TODO` exists, append a short note to `.agents/prompt-tasks/tasks/notes.md` and stop.
+.agents/prompt-tasks/consumer.md:27:- or no actionable `TODO` task exists
+.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md:30:- how `TODO`, `DONE`, and `DROP` relate to the extra working states
+.agents/prompt-tasks/tasks/index.md:11:- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
+.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md:5:- Status: `TODO`
+.agents/prompt-tasks/run-producer-loop.sh:10:CODEX_BIN=${CODEX_BIN:-codex}
+.agents/prompt-tasks/run-consumer-loop.sh:10:CODEX_BIN=${CODEX_BIN:-codex}
+.agents/skills/prompt-task-consumer/SKILL.md:3:description: "Select one TODO task card, implement it end to end, validate it, then hand the decision to task-review before finalizing the checkpoint."
+.agents/skills/prompt-task-consumer/SKILL.md:11:- The queue contains actionable `TODO` tasks
+.agents/skills/prompt-task-consumer/SKILL.md:31:1. Select one actionable `TODO` task with no unmet hard dependency.
+.agents/skills/prompt-task-consumer/SKILL.md:44:- If no actionable `TODO` exists, append a dated note to `notes.md` and stop.
+.agents/skills/task-review/SKILL.md:29:- `TODO`: useful progress exists but the task is not complete enough to close
+.agents/skills/task-review/SKILL.md:37:3. Choose exactly one outcome: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+.agents/skills/task-review/SKILL.md:46:- Do not use `DROP` as shorthand for "too hard right now"; use `BLOCKED` or return to `TODO`.
+.agents/skills/prompt-task-producer/SKILL.md:31:2. If queue should grow, create exactly one task card from template and set `Status: TODO`.
+.agents/skills/prompt-task-consumer/agents/openai.yaml:4:  default_prompt: "Use $prompt-task-consumer for one round: claim one actionable TODO, implement and validate it, then hand final status to $task-review."
+.agents/skills/task-review/agents/openai.yaml:4:  default_prompt: "Use $task-review on one task card: evaluate evidence, decide DONE/TODO/BLOCKED/DROP, and sync status in both card and index."
+.agents/skills/prompt-task-producer/agents/openai.yaml:4:  default_prompt: "Use $prompt-task-producer for one round: follow contract rules, create at most one TODO task card, or write a no-growth queue note."
+
+codex
+Repository evidence points to actionable gaps (empty queue, placeholder-heavy project context, and minimal loop runner guardrails). I am running a quick local script syntax check so the task proposal can cite concrete validation surface before I draft the single new card.
+exec
+/bin/zsh -lc 'bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh && echo "shell syntax ok"' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+shell syntax ok
+
+codex
+I have enough evidence to create one concrete queue item. I am planning this round as follows:
+
+1. Add one new `TODO` card focused on hardening `.agents/prompt-tasks/run-*.sh` startup checks and documenting operator-facing runner options.
+2. Sync `.agents/prompt-tasks/tasks/index.md` in the same edit so queue and card remain consistent.
+3. Verify the queue files only, then run `git-safe` workflow to commit and push just those queue artifacts if staging scope is clean.
+
+I will not touch product implementation files in this producer round beyond queue metadata updates.
+codex
+I am now editing queue artifacts only: creating one new task card from the template and updating `index.md` to add its matching live queue line. The task will target runner preflight clarity and README operator guidance because that gap is directly visible in current scripts and docs.
+ERROR: Reconnecting... 1/15
+exec
+/bin/zsh -lc "sed -n '1,120p' prompts-repo-dot.agents-prompt-tasks-0.md" in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ exited 1 in 0ms:
+sed: prompts-repo-dot.agents-prompt-tasks-0.md: No such file or directory
+
+exec
+/bin/zsh -lc 'ls -lb' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+total 8
+-rw-r--r--@ 1 allen  staff  2152 Apr 10 00:20 README.md
+
+codex
+I hit a mismatch while checking the previously reported untracked file, so I am rechecking worktree state before editing to avoid staging anything unintended.
+exec
+/bin/zsh -lc 'git status --short' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+apply patch
+patch: completed
+/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+
+apply patch
+patch: completed
+/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+codex
+The new task card and index entry are in place. I am validating field completeness and queue-card synchronization, then I will run the `git-safe` checkpoint flow on only the queue files that changed.
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/index.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'cat .agents/prompt-tasks/tasks/PT-20260410-4m2h.md' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+# Task Index
+
+This is the canonical shared task list. Update the task card and the matching line here in the same round.
+
+Line format:
+
+- `ID` | `STATUS` | title: ... | goal: ... | depends: ... | related: ... | updated: YYYY-MM-DD | file: `.agents/prompt-tasks/tasks/...`
+
+## Tasks
+
+- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+ succeeded in 0ms:
+# Task Card
+
+- ID: `PT-20260410-4m2h`
+- Title: `Harden loop runner preflight and operator docs`
+- Status: `TODO`
+- Source: `producer`
+- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
+- Depends On: `none`
+- Related Tasks: `none`
+- Blocked By: `none`
+- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
+- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
+- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
+- Created At: `2026-04-10`
+- Updated At: `2026-04-10`
+
+## User Prompt
+
+Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
+
+Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
+
+In both scripts, add preflight checks for:
+
+- prompt file existence
+- `CODEX_BIN` command availability
+- `ROUNDS` as a positive integer
+- `SLEEP_SECONDS` as a non-negative integer
+
+Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
+
+Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
+
+Do not modify queue metadata files or role contracts in this task.
+
+Validation requirements:
+
+- Run `bash -n` against both scripts after edits.
+- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
+- Record the exact commands and observed outcomes in `Delivery Notes`.
+
+## Context Snapshot
+
+- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
+- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
+- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
+
+## Delivery Notes
+
+- Pending consumer implementation.
+
+## Review Record
+
+- Reviewer:
+- Decision: `PENDING`
+- Evidence:
+- Follow-up:
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+ M .agents/prompt-tasks/tasks/index.md
+?? .agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+codex
+Queue artifacts changed meaningfully, so I am switching to the `git-safe` workflow now. I will run prechecks, stage only the new card and `index.md`, commit once with a producer-prefixed message, then perform a non-force linear push.
+exec
+/bin/zsh -lc 'git branch --show-current' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'git rev-parse --is-inside-work-tree' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+prompt-tasks
+
+ succeeded in 0ms:
+true
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'git remote get-url origin' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+ M .agents/prompt-tasks/tasks/index.md
+?? .agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+
+ succeeded in 0ms:
+git@github.com:gglin001/dot.agents.git
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+exec
+/bin/zsh -lc 'git add .agents/prompt-tasks/tasks/index.md .agents/prompt-tasks/tasks/PT-20260410-4m2h.md && git diff --cached --name-only' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+prompt-tasks/.agents/prompt-tasks/tasks/index.md
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+exec
+/bin/zsh -lc 'git commit -m "prompt-task-producer: add runner preflight task card"' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+[prompt-tasks f4d67ec] prompt-task-producer: add runner preflight task card
+ 2 files changed, 58 insertions(+), 1 deletion(-)
+ create mode 100644 prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+exec
+/bin/zsh -lc 'git rev-parse --abbrev-ref --symbolic-full-name @{u}' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+origin/prompt-tasks
+
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+codex
+Prechecks and commit succeeded. I am finishing `git-safe` with upstream sync (`fetch` then normal push) and will report whether a rebase was needed.
+exec
+/bin/zsh -lc 'git fetch origin && git push' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+ succeeded in 9543ms:
+To github.com:gglin001/dot.agents.git
+   244a946..f4d67ec  prompt-tasks -> prompt-tasks
+
+exec
+/bin/zsh -lc "git show --name-only --pretty=format:'%h%n%s' -1" in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+f4d67ec
+prompt-task-producer: add runner preflight task card
+prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+prompt-tasks/.agents/prompt-tasks/tasks/index.md
+
+exec
+/bin/zsh -lc 'git branch --show-current' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+exec
+/bin/zsh -lc 'git rev-parse --abbrev-ref --symbolic-full-name @{u}' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+origin/prompt-tasks
+
+ succeeded in 0ms:
+prompt-tasks
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/allen/repos/_blog/dot.agents/prompt-tasks
+ succeeded in 0ms:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+codex
+## 1. Queue Summary
+
+One queue growth action was taken. I created exactly one new actionable `TODO` task card, aligned it with the canonical index, and did not implement product code in this producer round.
+
+## 2. Work Performed
+
+1. Read required startup files:
+[contract.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/contract.md), [context.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/context.md), [index.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/index.md), [notes.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/notes.md).
+
+2. Reviewed style/reference artifacts and relevant harness files:
+[PT-HUMAN-REFERENCE.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md), [PT-YYYYMMDD-TEMPLATE.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md), [README.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/README.md), [run-producer-loop.sh](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/run-producer-loop.sh), [run-consumer-loop.sh](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/run-consumer-loop.sh).
+
+3. Inspected repository state with `git status --short` and confirmed queue artifacts were the only intended edits for this round.
+
+4. Added one new producer-authored task card and synchronized `index.md` in the same round.
+
+## 3. Evidence
+
+- Initial queue state was empty (`index.md` had `_No tasks yet...`).
+- Runner scripts currently invoke `"$CODEX_BIN" --yolo exec ...` without explicit preflight validation.
+- `README.md` describes loop flow, but does not document runner env var controls for deterministic single-round smoke runs.
+- Script syntax baseline check succeeded:
+`bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh`.
+
+## 4. Queue Updates
+
+- Created new task card:
+[PT-20260410-4m2h.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md)
+
+- Updated queue index entry:
+[index.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/index.md)
+
+New live task:
+
+- `PT-20260410-4m2h` | `TODO` | `Harden loop runner preflight and operator docs` | depends: `none` | related: `none` | updated: `2026-04-10`
+
+## 5. Git Finalization
+
+`git-safe` workflow was completed.
+
+- Preconditions:
+`git rev-parse --is-inside-work-tree` = `true`
+branch = `prompt-tasks`
+origin = `git@github.com:gglin001/dot.agents.git`
+
+- Staged scope (only intended files):
+`prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+`prompt-tasks/.agents/prompt-tasks/tasks/index.md`
+
+- Commit:
+`f4d67ec`
+`prompt-task-producer: add runner preflight task card`
+
+- Branch/upstream:
+`prompt-tasks` -> `origin/prompt-tasks`
+
+- Push result:
+Succeeded directly after `git fetch origin`, no rebase needed.
+
+## 6. Next Suggestion
+
+1. Run one `$prompt-task-consumer` round to execute `PT-20260410-4m2h` and route it through `$task-review` in the same round.
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..d228bf197a78f571531bc0be4c55873257c1aace
+--- /dev/null
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md
+@@ -0,0 +1,57 @@
++# Task Card
++
++- ID: `PT-20260410-4m2h`
++- Title: `Harden loop runner preflight and operator docs`
++- Status: `TODO`
++- Source: `producer`
++- Parent Goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.`
++- Depends On: `none`
++- Related Tasks: `none`
++- Blocked By: `none`
++- Repo Scope: `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, `README.md`
++- Validation: `bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh` plus one failing preflight run per script using `ROUNDS=1 SLEEP_SECONDS=0 CODEX_BIN=definitely-missing-command`.
++- Exit Criteria: `Both loop scripts fail fast with explicit preflight errors for missing runtime prerequisites, and README.md documents the supported runner environment variables with a one-round usage example.`
++- Created At: `2026-04-10`
++- Updated At: `2026-04-10`
++
++## User Prompt
++
++Harden the loop launcher scripts so startup failures are explicit and deterministic before the first loop iteration.
++
++Touch only `.agents/prompt-tasks/run-producer-loop.sh`, `.agents/prompt-tasks/run-consumer-loop.sh`, and `README.md`.
++
++In both scripts, add preflight checks for:
++
++- prompt file existence
++- `CODEX_BIN` command availability
++- `ROUNDS` as a positive integer
++- `SLEEP_SECONDS` as a non-negative integer
++
++Keep current defaults and loop behavior, but make error messages actionable and consistent across producer and consumer launchers.
++
++Update `README.md` to document runner environment variables and include a one-round example for each launcher (`ROUNDS=1`) so operators can perform deterministic smoke runs.
++
++Do not modify queue metadata files or role contracts in this task.
++
++Validation requirements:
++
++- Run `bash -n` against both scripts after edits.
++- Run one intentional failing preflight command per script with `CODEX_BIN=definitely-missing-command` and confirm the script exits non-zero with a clear prerequisite error.
++- Record the exact commands and observed outcomes in `Delivery Notes`.
++
++## Context Snapshot
++
++- Current repo fact: both loop scripts invoke `"$CODEX_BIN" --yolo exec ...` without explicit prerequisite validation.
++- Current quality signal: `README.md` documents the high-level flow but not the loop runner environment variables that control deterministic single-round execution.
++- Risk or assumption: startup failures currently surface as generic shell errors, which increases operator friction and weakens round reproducibility.
++
++## Delivery Notes
++
++- Pending consumer implementation.
++
++## Review Record
++
++- Reviewer:
++- Decision: `PENDING`
++- Evidence:
++- Follow-up:
+diff --git a/prompt-tasks/.agents/prompt-tasks/tasks/index.md b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+index ea075042efabbc3ad84a40d808ce12f88caf1e35..572d28f5cd859cbbb454027e625cffcd0a78e73f
+--- a/prompt-tasks/.agents/prompt-tasks/tasks/index.md
++++ b/prompt-tasks/.agents/prompt-tasks/tasks/index.md
+@@ -8,4 +8,4 @@
+ 
+ ## Tasks
+ 
+-- _No tasks yet. Add human-authored seed tasks or let the producer create the first one._
++- `PT-20260410-4m2h` | `TODO` | title: `Harden loop runner preflight and operator docs` | goal: `Replace open-ended autonomous work with deterministic task cards written in the voice of a human operator.` | depends: `none` | related: `none` | updated: `2026-04-10` | file: `.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+
+tokens used
+47,033
+## 1. Queue Summary
+
+One queue growth action was taken. I created exactly one new actionable `TODO` task card, aligned it with the canonical index, and did not implement product code in this producer round.
+
+## 2. Work Performed
+
+1. Read required startup files:
+[contract.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/contract.md), [context.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/context.md), [index.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/index.md), [notes.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/notes.md).
+
+2. Reviewed style/reference artifacts and relevant harness files:
+[PT-HUMAN-REFERENCE.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-HUMAN-REFERENCE.md), [PT-YYYYMMDD-TEMPLATE.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md), [README.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/README.md), [run-producer-loop.sh](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/run-producer-loop.sh), [run-consumer-loop.sh](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/run-consumer-loop.sh).
+
+3. Inspected repository state with `git status --short` and confirmed queue artifacts were the only intended edits for this round.
+
+4. Added one new producer-authored task card and synchronized `index.md` in the same round.
+
+## 3. Evidence
+
+- Initial queue state was empty (`index.md` had `_No tasks yet...`).
+- Runner scripts currently invoke `"$CODEX_BIN" --yolo exec ...` without explicit preflight validation.
+- `README.md` describes loop flow, but does not document runner env var controls for deterministic single-round smoke runs.
+- Script syntax baseline check succeeded:
+`bash -n .agents/prompt-tasks/run-producer-loop.sh .agents/prompt-tasks/run-consumer-loop.sh`.
+
+## 4. Queue Updates
+
+- Created new task card:
+[PT-20260410-4m2h.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md)
+
+- Updated queue index entry:
+[index.md](/Users/allen/repos/_blog/dot.agents/prompt-tasks/.agents/prompt-tasks/tasks/index.md)
+
+New live task:
+
+- `PT-20260410-4m2h` | `TODO` | `Harden loop runner preflight and operator docs` | depends: `none` | related: `none` | updated: `2026-04-10`
+
+## 5. Git Finalization
+
+`git-safe` workflow was completed.
+
+- Preconditions:
+`git rev-parse --is-inside-work-tree` = `true`
+branch = `prompt-tasks`
+origin = `git@github.com:gglin001/dot.agents.git`
+
+- Staged scope (only intended files):
+`prompt-tasks/.agents/prompt-tasks/tasks/PT-20260410-4m2h.md`
+`prompt-tasks/.agents/prompt-tasks/tasks/index.md`
+
+- Commit:
+`f4d67ec`
+`prompt-task-producer: add runner preflight task card`
+
+- Branch/upstream:
+`prompt-tasks` -> `origin/prompt-tasks`
+
+- Push result:
+Succeeded directly after `git fetch origin`, no rebase needed.
+
+## 6. Next Suggestion
+
+1. Run one `$prompt-task-consumer` round to execute `PT-20260410-4m2h` and route it through `$task-review` in the same round.
