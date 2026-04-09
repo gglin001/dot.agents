@@ -4,10 +4,10 @@ All autonomous work in a repository using this harness is task-driven.
 
 ## Shared Truth
 
-- `.agents/tasks/index.md` is the canonical queue. Every live task must have exactly one matching line there.
-- Each queue line maps to exactly one task card in `.agents/tasks/`.
-- `.agents/tasks/context.md` stores project-level goals, constraints, and quality signals.
-- `.agents/tasks/notes.md` stores dated facts that are useful across tasks.
+- `.agents/prompt-tasks/tasks/index.md` is the canonical queue. Every live task must have exactly one matching line there.
+- Each queue line maps to exactly one task card in `.agents/prompt-tasks/tasks/`.
+- `.agents/prompt-tasks/tasks/context.md` stores project-level goals, constraints, and quality signals.
+- `.agents/prompt-tasks/tasks/notes.md` stores dated facts that are useful across tasks.
 - Human-authored task cards are first-class and should be treated as authoritative examples of local style.
 
 ## Role Split
@@ -26,7 +26,7 @@ All autonomous work in a repository using this harness is task-driven.
 - Claim it by moving it to `DOING` in both the task card and `index.md`.
 - Implement and validate exactly that task or explicitly record scope spillover.
 - Run review in the same round. Review, not coding, decides the final status.
-- Use `.agents/tasks/notes.md` for cross-task facts that matter outside one task card.
+- Use `.agents/prompt-tasks/tasks/notes.md` for cross-task facts that matter outside one task card.
 
 ## Status Model
 
@@ -89,7 +89,7 @@ The `User Prompt` section is the core contract. It should read like a clear inst
 ## Concurrency and Git
 
 - The safe operating model is two separate worktrees or clones, not two long-running agents inside one mutable worktree.
-- Treat git history plus the `.agents/tasks/` directory as the shared synchronization layer.
+- Treat git history plus the `.agents/prompt-tasks/tasks/` directory as the shared synchronization layer.
 - Both producer and consumer should finalize meaningful queue or code checkpoints with the local `git-safe` skill.
 - Only resolve conflicts that belong to the current checkpoint. If a conflict is unrelated or changes task semantics, stop and report instead of guessing.
 

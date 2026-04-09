@@ -4,7 +4,7 @@ This is the canonical shared task list. Update the task card and the matching li
 
 Line format:
 
-- `ID` | `STATUS` | title: ... | goal: ... | depends: ... | related: ... | updated: YYYY-MM-DD | file: `.agents/tasks/...`
+- `ID` | `STATUS` | title: ... | goal: ... | depends: ... | related: ... | updated: YYYY-MM-DD | file: `.agents/prompt-tasks/tasks/...`
 
 ## Tasks
 

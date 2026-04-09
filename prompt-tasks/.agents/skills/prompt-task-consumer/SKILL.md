@@ -7,7 +7,7 @@ description: "Select one TODO task card, implement it end to end, validate it, t
 
 ## Use When
 
-- Running `.agents/loop/consumer.md`
+- Running `.agents/prompt-tasks/loop/consumer.md`
 - The queue already contains concrete `TODO` tasks
 - One focused implementation round should be executed from an explicit task card
 
@@ -19,10 +19,10 @@ description: "Select one TODO task card, implement it end to end, validate it, t
 
 ## Inputs
 
-- `.agents/prompt-tasks-contract.md`
-- `.agents/tasks/context.md`
-- `.agents/tasks/index.md`
-- one chosen `.agents/tasks/PT-*.md` task card
+- `.agents/prompt-tasks/prompt-tasks-contract.md`
+- `.agents/prompt-tasks/tasks/context.md`
+- `.agents/prompt-tasks/tasks/index.md`
+- one chosen `.agents/prompt-tasks/tasks/PT-*.md` task card
 - relevant repository code, tests, docs, and git state
 
 ## Workflow
@@ -30,12 +30,12 @@ description: "Select one TODO task card, implement it end to end, validate it, t
 ### 1. Choose one task
 
 - Prefer the oldest actionable `TODO` with clear scope and no unmet hard dependency.
-- If the queue has no actionable `TODO`, append a note to `.agents/tasks/notes.md` and stop.
+- If the queue has no actionable `TODO`, append a note to `.agents/prompt-tasks/tasks/notes.md` and stop.
 
 ### 2. Claim it visibly
 
 - Move the task card to `Status: DOING`.
-- Update the matching line in `.agents/tasks/index.md`.
+- Update the matching line in `.agents/prompt-tasks/tasks/index.md`.
 - Record any immediate uncertainty or missing dependency in `Delivery Notes`.
 
 ### 3. Implement the task

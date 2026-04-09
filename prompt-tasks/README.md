@@ -1,143 +1,61 @@
 # prompt-tasks
 
-`prompt-tasks` is a task-first autonomous development harness.
+`prompt-tasks` is a task-first harness for autonomous development.
 
-Unlike [`autonomous-loop`](../autonomous-loop/README.md), it does not ask the agent to decide "what should I do next?" from open-ended repository evidence. It asks one agent to write the next task as if a human had written a concrete `user prompt`, then asks another agent to execute exactly one such task end to end.
+It splits work into two loops:
 
-This `dot.agents` repository is a collection of harness experiments. In real usage, copy `prompt-tasks/.agents/` into a target project repository and run everything there.
+- Producer: creates at most one concrete task card from repository reality.
+- Consumer: executes one `TODO` task card end to end, then hands the decision to review.
 
-## CWD and Copy Model
+The goal is simple: keep autonomous work deterministic at the task boundary.
 
-- Runtime CWD is the target project root that contains `.agents/`.
-- All queue files, loop prompts, skills, and scripts live under `.agents/`.
-- `prompt-tasks/README.md` is reference documentation only.
-- The operating contract lives in `.agents/prompt-tasks-contract.md`.
+## Runtime Layout
 
-## Core Model
+- Runtime CWD: target project root containing `.agents/`.
+- Prompt-task runtime files: `.agents/prompt-tasks/`.
+- Shared skills: `.agents/skills/`.
 
-- One shared `.agents/tasks/` directory is the durable interface between human operators, the producer loop, and the consumer loop.
-- Every task card is written as a direct `user prompt` to an implementation agent.
-- The producer understands repository reality and turns that reality into one more concrete task card.
-- The consumer selects one `TODO` task, implements it, validates it, reviews it, and only then decides the final task status.
-- Human-authored task cards are first-class inputs. Early in a project they are also the reference style that the producer should imitate.
+## Core Files
 
-## Why This Exists
+- `.agents/prompt-tasks/prompt-tasks-contract.md`: role boundaries and queue rules.
+- `.agents/prompt-tasks/tasks/context.md`: project-level goals and constraints.
+- `.agents/prompt-tasks/tasks/index.md`: canonical queue.
+- `.agents/prompt-tasks/tasks/notes.md`: cross-task dated facts.
+- `.agents/prompt-tasks/tasks/templates/task.template.md`: task card template.
+- `.agents/prompt-tasks/loop/producer.md`: producer loop prompt.
+- `.agents/prompt-tasks/loop/consumer.md`: consumer loop prompt.
 
-The central claim is simple: unattended agent development should be a continuation of a normal human development process, not a mysterious replacement for it.
+## Task Flow
 
-That means:
-
-- each round should begin from a concrete task, not from a vague instruction to "figure out what matters"
-- the task should look like something a human operator would plausibly write
-- the producer replaces the human act of writing the next prompt
-- the consumer replaces the human act of carrying that prompt through implementation and review
-
-This keeps the loop deterministic at the task boundary. The agent is treated like a non-mystical engineer that needs a clear assignment.
-
-## Task Lifecycle
-
-The minimum durable statuses are `TODO`, `DONE`, and `DROP`, but the workflow uses a few more transient states to make handoff and recovery safer:
-
-- `TODO`: ready for a consumer round
-- `DOING`: currently claimed by a consumer
-- `REVIEW`: implementation finished, review still deciding the outcome
-- `BLOCKED`: cannot continue until some dependency or information gap is resolved
-- `DONE`: accepted by review with evidence
-- `DROP`: intentionally abandoned because the task is obsolete, duplicated, wrong, or no longer worth doing
-
-The consumer must not move a task straight from coding to `DONE` without running the review step.
-
-## Shared Files
-
-- `.agents/prompt-tasks-contract.md`: role boundaries, queue contract, state rules
-- `.agents/tasks/context.md`: project-level goals, constraints, and quality signals shared by all rounds
-- `.agents/tasks/index.md`: canonical task list
-- `.agents/tasks/notes.md`: dated queue, implementation, and review notes that do not belong to only one task
-- `.agents/tasks/templates/task.template.md`: template for both human-written and producer-written task cards
-
-## Directory Layout
-
-```text
-prompt-tasks/
-├── README.md
-└── .agents/
-    ├── prompt-tasks-contract.md
-    ├── loop/
-    │   ├── producer.md
-    │   └── consumer.md
-    ├── skills/
-    │   ├── prompt-task-producer/
-    │   ├── prompt-task-consumer/
-    │   ├── task-review/
-    │   └── git-safe/
-    ├── scripts/
-    │   ├── run-producer-loop.sh
-    │   ├── run-consumer-loop.sh
-    │   └── run-pair.sh
-    └── tasks/
-        ├── context.md
-        ├── index.md
-        ├── notes.md
-        ├── examples/
-        └── templates/
-```
-
-## Safe Runtime Model
-
-Running two loops against the exact same checkout directory is fragile. Both agents need the same `.agents/tasks/` directory, but they do not need the same live filesystem instance.
-
-The recommended model is:
-
-1. create two separate checkouts or local clones of the same repository
-2. run the producer loop in one checkout
-3. run the consumer loop in the other checkout
-4. use the shared git history plus `.agents/tasks/` files as the durable synchronization layer
-
-This is why `prompt-tasks` includes a git finalization skill that stages the intended checkpoint, syncs linearly, and only resolves conflicts that are genuinely part of the current task.
+1. Producer reads queue and repository evidence.
+2. Producer creates at most one new task card, or records a no-op note.
+3. Consumer picks one actionable `TODO` task and marks it `DOING`.
+4. Consumer implements and validates.
+5. `task-review` decides final state: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+6. Queue and task card must stay in sync.
 
 ## Quick Start
 
-Copy `.agents/` into your target project repository:
+Copy `.agents/` into your target repository:
 
 ```bash
 cp -R /path/to/dot.agents/prompt-tasks/.agents /path/to/target-project/.agents
 ```
 
-Create two separate local copies of the target repository, and make sure both contain the same `.agents/` directory. Then run the producer loop in one copy:
+Run producer and consumer in two separate local checkouts(prefer):
 
 ```bash
 cd /path/to/target-project-producer
-.agents/scripts/run-producer-loop.sh
+.agents/prompt-tasks/scripts/run-producer-loop.sh
 ```
-
-And the consumer loop in the other copy:
 
 ```bash
 cd /path/to/target-project-consumer
-.agents/scripts/run-consumer-loop.sh
+.agents/prompt-tasks/scripts/run-consumer-loop.sh
 ```
 
-Or launch both after you set two distinct checkout paths:
+## Practical Notes
 
-```bash
-PRODUCER_WORKDIR=/path/to/target-project-producer \
-CONSUMER_WORKDIR=/path/to/target-project-consumer \
-.agents/scripts/run-pair.sh
-```
-
-## Human Bootstrapping
-
-In the early phase of a project, humans should add task cards directly. Those cards become the reference examples for tone, granularity, and acceptance criteria. Over time, the producer should learn the local style by imitating the best human-authored prompts already present in `.agents/tasks/`.
-
-`.agents/tasks/examples/PT-HUMAN-REFERENCE.md` shows the intended shape of such a task card.
-
-## Relationship to `autonomous-loop`
-
-Use `autonomous-loop` when the system should reason from durable state and current evidence to choose its own next move.
-
-Use `prompt-tasks` when you want the opposite boundary:
-
-- the system must always act on one explicit task
-- task creation and task execution are separated
-- queue quality matters as much as implementation quality
-- human prompts and agent prompts should converge toward the same style
+- Treat git history plus `.agents/prompt-tasks/tasks/` as the synchronization layer.
+- Human-authored cards are valid first-class inputs.
+- Example card: `.agents/prompt-tasks/tasks/examples/PT-HUMAN-REFERENCE.md`.

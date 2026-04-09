@@ -1,13 +1,13 @@
 ---
 name: prompt-task-producer
-description: "Inspect repository reality, then add at most one new task card written as a direct user prompt in .agents/tasks/ without flooding the queue."
+description: "Inspect repository reality, then add at most one new task card written as a direct user prompt in .agents/prompt-tasks/tasks/ without flooding the queue."
 ---
 
 # Prompt Task Producer
 
 ## Use When
 
-- Running `.agents/loop/producer.md`
+- Running `.agents/prompt-tasks/loop/producer.md`
 - Expanding or refining the queue from actual repository evidence
 - Human-authored task cards should be imitated and extended
 
@@ -21,25 +21,25 @@ description: "Inspect repository reality, then add at most one new task card wri
 
 ## Inputs
 
-- `.agents/prompt-tasks-contract.md`
-- `.agents/tasks/context.md`
-- `.agents/tasks/index.md`
-- `.agents/tasks/notes.md`
+- `.agents/prompt-tasks/prompt-tasks-contract.md`
+- `.agents/prompt-tasks/tasks/context.md`
+- `.agents/prompt-tasks/tasks/index.md`
+- `.agents/prompt-tasks/tasks/notes.md`
 - the relevant repository files, tests, docs, and git state
 
 ## Output Contract
 
 When you create a new task:
 
-- create one `.agents/tasks/PT-<date>-<random>.md` card
-- initialize it from `.agents/tasks/templates/task.template.md`
+- create one `.agents/prompt-tasks/tasks/PT-<date>-<random>.md` card
+- initialize it from `.agents/prompt-tasks/tasks/templates/task.template.md`
 - set `Status: TODO`
 - write a concrete `User Prompt` section with scope, constraints, validation, and expected evidence
-- update `.agents/tasks/index.md` in the same round
+- update `.agents/prompt-tasks/tasks/index.md` in the same round
 
 When you do not create a new task:
 
-- append a short dated reason to `.agents/tasks/notes.md`
+- append a short dated reason to `.agents/prompt-tasks/tasks/notes.md`
 - explain whether the queue is already sufficient, blocked, duplicated, or missing repo context
 
 ## Task Quality Bar
