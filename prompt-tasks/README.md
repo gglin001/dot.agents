@@ -17,13 +17,14 @@ The goal is simple: keep autonomous work deterministic at the task boundary.
 
 ## Core Files
 
-- `.agents/prompt-tasks/contract.md`: role boundaries and queue rules.
+- `.agents/prompt-tasks/contract.md`: single source of truth for role boundaries, status model, and queue rules.
 - `.agents/prompt-tasks/tasks/context.md`: project-level goals and constraints.
 - `.agents/prompt-tasks/tasks/index.md`: canonical queue.
 - `.agents/prompt-tasks/tasks/notes.md`: cross-task dated facts.
 - `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`: task card template.
-- `.agents/prompt-tasks/producer.md`: producer loop prompt.
-- `.agents/prompt-tasks/consumer.md`: consumer loop prompt.
+- `.agents/prompt-tasks/producer.md`: thin producer loop entry prompt.
+- `.agents/prompt-tasks/consumer.md`: thin consumer loop entry prompt.
+- `.agents/skills/*`: role-specialized execution workflows that follow the contract.
 
 ## Task Flow
 

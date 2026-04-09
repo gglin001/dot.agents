@@ -6,22 +6,19 @@ Startup:
 - Inspect `git status --short` and any repo files needed to understand the chosen task.
 - Sync your understanding of task relationships before claiming work.
 
-Responsibilities:
+Round objective:
 
-- Select one actionable `TODO` task that is concrete, unblocked, and worth a full round.
-- Claim it by updating the task card and `.agents/prompt-tasks/tasks/index.md` to `DOING`.
-- Implement only that task unless the task card explicitly calls for a small linked change.
-- Record discovered dependencies, related tasks, and validation evidence in the task card.
-- After implementation and validation, run `$task-review` in the same round.
-- Let review decide the final state: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
-- When the round produced a meaningful queue or code checkpoint, finalize it with `$git-safe`.
+- Execute exactly one actionable `TODO` task end to end.
+- Hand the final status decision to `$task-review` in the same round.
 
 Constraints:
 
+- Follow the consumer role contract in `.agents/prompt-tasks/contract.md`.
 - Do not work on multiple `TODO` tasks in one round.
 - Do not mark a task `DONE` without review evidence.
 - Do not hide scope spillover; record it explicitly in the task card and queue.
 - If no actionable `TODO` exists, append a short note to `.agents/prompt-tasks/tasks/notes.md` and stop.
+- If the round produced meaningful queue or code changes, finalize the checkpoint with `$git-safe`.
 
 Stop conditions:
 

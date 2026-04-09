@@ -11,6 +11,12 @@ description: "Review a just-implemented prompt task with a code-review mindset, 
 - Implementation exists, but the final task state has not yet been accepted
 - The same agent needs to switch from builder mode to reviewer mode
 
+## Canonical Rule Source
+
+Read `.agents/prompt-tasks/contract.md` first.
+The contract defines allowed outcomes, queue synchronization, and acceptance rules.
+If this skill and the contract differ, the contract wins.
+
 ## Review Mindset
 
 - Review like a skeptical code reviewer, not like a finisher protecting sunk cost.
@@ -26,31 +32,16 @@ description: "Review a just-implemented prompt task with a code-review mindset, 
 
 ## Workflow
 
-### 1. Re-read the task contract
-
-- Read the task card from top to bottom.
-- Re-check `Repo Scope`, `Validation`, `Exit Criteria`, `Depends On`, and `Related Tasks`.
-
-### 2. Review the implementation
-
-- Inspect the changed files and validation evidence.
-- Compare the actual change against the stated task contract.
-- Treat missing tests or weak evidence as review issues, not as minor paperwork.
-
-### 3. Decide the outcome
-
-- Choose exactly one final status.
-- Write the reason in `Review Record`.
-- Update both the task card and the matching queue line in `.agents/prompt-tasks/tasks/index.md`.
-
-### 4. Preserve cross-task knowledge
-
-- If review discovered a reusable fact, append it to `.agents/prompt-tasks/tasks/notes.md`.
-- If review exposed follow-up work, link it explicitly rather than relying on memory.
+1. Re-read the full task card, focusing on `Repo Scope`, `Validation`, `Exit Criteria`, and task relations.
+2. Inspect implementation diffs and validation evidence against the written contract.
+3. Choose exactly one outcome: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+4. Write rationale and evidence in `Review Record`.
+5. Sync status in both the task card and `.agents/prompt-tasks/tasks/index.md`.
+6. If review found reusable facts, append them to `.agents/prompt-tasks/tasks/notes.md`.
 
 ## Guardrails
 
 - Do not rubber-stamp your own implementation.
 - Do not mark `DONE` when validation is missing or contradictory.
-- Do not use `DROP` as a shorthand for "too hard right now"; use `BLOCKED` or return to `TODO`.
+- Do not use `DROP` as shorthand for "too hard right now"; use `BLOCKED` or return to `TODO`.
 - Do not leave the queue and the task card out of sync.

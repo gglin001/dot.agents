@@ -8,62 +8,37 @@ description: "Select one TODO task card, implement it end to end, validate it, t
 ## Use When
 
 - Running `.agents/prompt-tasks/consumer.md`
-- The queue already contains concrete `TODO` tasks
-- One focused implementation round should be executed from an explicit task card
+- The queue contains actionable `TODO` tasks
+- You need one deterministic consumer round
 
-## Role Boundary
+## Canonical Rule Source
 
-- You consume one task at a time.
-- You own implementation, validation, relation updates, and the handoff into review.
-- Review decides the final task state, not the implementation step itself.
+Read `.agents/prompt-tasks/contract.md` first.
+Role boundaries, status transitions, and task-card requirements are defined there.
+If this skill and the contract differ, the contract wins.
 
-## Inputs
+## Read Order
 
-- `.agents/prompt-tasks/contract.md`
-- `.agents/prompt-tasks/tasks/context.md`
-- `.agents/prompt-tasks/tasks/index.md`
-- one chosen `.agents/prompt-tasks/tasks/PT-*.md` task card
-- relevant repository code, tests, docs, and git state
+1. `.agents/prompt-tasks/contract.md`
+2. `.agents/prompt-tasks/tasks/context.md`
+3. `.agents/prompt-tasks/tasks/index.md`
+4. `.agents/prompt-tasks/tasks/notes.md`
+5. One selected `.agents/prompt-tasks/tasks/PT-*.md` card
+6. Relevant repository code, tests, docs, and `git status --short`
 
-## Workflow
+## Round Workflow
 
-### 1. Choose one task
+1. Select one actionable `TODO` task with no unmet hard dependency.
+2. Claim it by setting `Status: DOING` in both the card and `index.md`.
+3. Implement inside declared scope, or record explicit spillover.
+4. Run validation specified by the task, or document the exact blocker.
+5. Hand off to `$task-review` in the same round.
+6. Apply review outcome and keep task card plus `index.md` synchronized.
+7. If queue or code changed meaningfully, finalize with `$git-safe`.
 
-- Prefer the oldest actionable `TODO` with clear scope and no unmet hard dependency.
-- If the queue has no actionable `TODO`, append a note to `.agents/prompt-tasks/tasks/notes.md` and stop.
+## Consumer-Specific Guardrails
 
-### 2. Claim it visibly
-
-- Move the task card to `Status: DOING`.
-- Update the matching line in `.agents/prompt-tasks/tasks/index.md`.
-- Record any immediate uncertainty or missing dependency in `Delivery Notes`.
-
-### 3. Implement the task
-
-- Stay inside the task scope unless the task card explicitly calls for one linked change.
-- If you uncover new dependency structure, update `Depends On` or `Related Tasks`.
-- Keep evidence in the task card concise and factual.
-
-### 4. Validate
-
-- Run the validation path stated in the task card whenever feasible.
-- If validation cannot run, record the exact reason and reduce your confidence accordingly.
-- Do not hand incomplete evidence to review as if it were complete.
-
-### 5. Review before closure
-
-- Set the task to `REVIEW` if you need to persist the pre-review state.
-- Call `$task-review` in the same round whenever possible.
-- Let review write the final outcome: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
-
-### 6. Finalize the checkpoint
-
-- If the round produced meaningful queue or code changes, call `$git-safe`.
-- Keep the checkpoint scoped to the chosen task and its necessary queue updates.
-
-## Guardrails
-
-- Do not pick multiple queue items.
-- Do not silently split the task without documenting the split.
-- Do not mark `DONE` without review evidence.
-- Do not ignore related tasks when they materially affect correctness or future work.
+- Do not consume multiple tasks in one round.
+- Do not hide scope changes, relation updates, or discovered blockers.
+- Do not mark a task `DONE` without review acceptance and evidence.
+- If no actionable `TODO` exists, append a dated note to `notes.md` and stop.

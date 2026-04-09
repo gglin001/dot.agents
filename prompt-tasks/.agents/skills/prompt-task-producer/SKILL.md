@@ -9,83 +9,35 @@ description: "Inspect repository reality, then add at most one new task card wri
 
 - Running `.agents/prompt-tasks/producer.md`
 - Expanding or refining the queue from actual repository evidence
-- Human-authored task cards should be imitated and extended
+- You need one deterministic producer round
 
-## Role Boundary
+## Canonical Rule Source
 
-- You produce tasks, not product code.
-- You may edit queue artifacts and shared task metadata.
-- Create at most one new task card per round.
-- Prefer refining or linking existing tasks over creating overlapping work.
-- A task card must read like a direct human prompt to an implementation agent.
+Read `.agents/prompt-tasks/contract.md` first.
+Role boundaries, state rules, task schema, and stop conditions are defined there.
+If this skill and the contract differ, the contract wins.
 
-## Inputs
+## Read Order
 
-- `.agents/prompt-tasks/contract.md`
-- `.agents/prompt-tasks/tasks/context.md`
-- `.agents/prompt-tasks/tasks/index.md`
-- `.agents/prompt-tasks/tasks/notes.md`
-- the relevant repository files, tests, docs, and git state
+1. `.agents/prompt-tasks/contract.md`
+2. `.agents/prompt-tasks/tasks/context.md`
+3. `.agents/prompt-tasks/tasks/index.md`
+4. `.agents/prompt-tasks/tasks/notes.md`
+5. Relevant repository code, tests, docs, and `git status --short`
 
-## Output Contract
+## Round Workflow
 
-When you create a new task:
+1. Decide queue growth from repository evidence.
+2. If queue should grow, create exactly one task card from template and set `Status: TODO`.
+3. If queue should not grow, append one short dated reason to `notes.md`.
+4. Keep task links explicit: update `Depends On` and `Related Tasks` when needed.
+5. Keep queue synchronization strict: task card and `index.md` must match in the same round.
+6. If queue artifacts changed meaningfully, finalize with `$git-safe`.
 
-- create one `.agents/prompt-tasks/tasks/PT-<date>-<random>.md` card
-- initialize it from `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`
-- set `Status: TODO`
-- write a concrete `User Prompt` section with scope, constraints, validation, and expected evidence
-- update `.agents/prompt-tasks/tasks/index.md` in the same round
+## Producer-Specific Guardrails
 
-When you do not create a new task:
-
-- append a short dated reason to `.agents/prompt-tasks/tasks/notes.md`
-- explain whether the queue is already sufficient, blocked, duplicated, or missing repo context
-
-## Task Quality Bar
-
-A good producer-created task:
-
-- advances one clear `Parent Goal`
-- names the repo scope precisely
-- carries one main validation path
-- states what should not be touched when that matters
-- explains hard dependencies versus softer related tasks
-- is small enough that one consumer round can realistically close it
-
-## Workflow
-
-### 1. Load queue and repo state
-
-- Read queue metadata first.
-- Inspect the repo enough to understand current progress and gaps.
-- Look for signals such as failing tests, missing validation, partially finished code, or stale queue assumptions.
-
-### 2. Decide whether the queue needs a new task
-
-- Avoid queue growth when existing `TODO` tasks are already concrete and sufficient.
-- Avoid duplicates when a live task can be refined instead.
-- Prefer a new task only when it adds meaningful determinism.
-
-### 3. Write the task card
-
-- Use the task template shape.
-- Make the `User Prompt` section specific enough that a consumer can act without re-inventing the task.
-- Capture why the task matters to the project, not just what file to edit.
-
-### 4. Link the task
-
-- Update `Depends On`, `Related Tasks`, and the queue line in `index.md`.
-- If the task was derived from a repo signal, record that signal in `Context Snapshot`.
-
-### 5. Finalize carefully
-
-- If the queue changed meaningfully, call `$git-safe`.
-- If no task was created, leave a factual note and stop without manufacturing work.
-
-## Guardrails
-
-- Do not implement repo features in this role.
-- Do not create vague cleanup tasks with no validation.
-- Do not create a second task when the first new task already covers the gap.
-- Do not let the queue become a speculative wishlist.
+- Do not implement product code in this role.
+- Do not create more than one new task card in a round.
+- Do not create vague tasks lacking concrete validation.
+- Do not create duplicate tasks when an existing card can be refined.
+- Prefer no-growth notes over speculative backlog expansion.

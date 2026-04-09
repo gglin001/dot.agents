@@ -1,59 +1,49 @@
 # prompt-tasks Operating Contract
 
-All autonomous work in a repository using this harness is task-driven.
+This file is the single source of truth for prompt-tasks behavior.
+If any instruction in `producer.md`, `consumer.md`, or skill docs conflicts with this file, this file wins.
+
+## Canonical Runtime Files
+
+- `.agents/prompt-tasks/contract.md`: normative workflow and state rules
+- `.agents/prompt-tasks/tasks/context.md`: project facts, goals, constraints, and risks
+- `.agents/prompt-tasks/tasks/index.md`: canonical queue, one line per live task card
+- `.agents/prompt-tasks/tasks/notes.md`: dated cross-task facts
+- `.agents/prompt-tasks/tasks/PT-YYYYMMDD-TEMPLATE.md`: task card template
 
 ## Shared Truth
 
-- `.agents/prompt-tasks/tasks/index.md` is the canonical queue. Every live task must have exactly one matching line there.
-- Each queue line maps to exactly one task card in `.agents/prompt-tasks/tasks/`.
-- `.agents/prompt-tasks/tasks/context.md` stores project-level goals, constraints, and quality signals.
-- `.agents/prompt-tasks/tasks/notes.md` stores dated facts that are useful across tasks.
-- Human-authored task cards are first-class and should be treated as authoritative examples of local style.
-
-## Role Split
-
-### Producer
-
-- Inspect repository reality, not just the `.agents/` metadata.
-- Create at most one new task card per round.
-- Prefer refining or linking existing tasks over creating overlapping work.
-- Write the task as a direct `user prompt` to an implementation agent.
-- Do not implement product code in producer rounds except queue-maintenance changes needed to express the task clearly.
-
-### Consumer
-
-- Select one actionable `TODO` task.
-- Claim it by moving it to `DOING` in both the task card and `index.md`.
-- Implement and validate exactly that task or explicitly record scope spillover.
-- Run review in the same round. Review, not coding, decides the final status.
-- Use `.agents/prompt-tasks/tasks/notes.md` for cross-task facts that matter outside one task card.
+- Every live task card has exactly one matching queue line in `index.md`.
+- Every queue line maps to exactly one task card in `.agents/prompt-tasks/tasks/`.
+- Human-authored task cards are authoritative examples of local style and intent.
+- `context.md` stores project facts, not role workflow rules.
 
 ## Status Model
 
-Required durable outcomes:
+Durable outcomes:
 
 - `TODO`
 - `DONE`
 - `DROP`
 
-Supported working states:
+Working states:
 
 - `DOING`
 - `REVIEW`
 - `BLOCKED`
 
-State rules:
+State definitions:
 
-- `TODO` means a consumer can pick the task now.
-- `DOING` means a consumer claimed the task and may still be editing or validating.
-- `REVIEW` means implementation reached a decision point but the review outcome is not yet written.
-- `BLOCKED` means the task is still relevant but cannot currently move.
-- `DONE` requires validation evidence plus a positive review record.
-- `DROP` requires an explicit reason such as duplication, obsolescence, or a wrong premise.
+- `TODO`: actionable now by a consumer.
+- `DOING`: claimed by one consumer and actively in progress.
+- `REVIEW`: implementation reached a decision point, review not finalized yet.
+- `BLOCKED`: still relevant, currently not actionable due to a concrete blocker.
+- `DONE`: exit criteria met, validation evidence present, review accepted.
+- `DROP`: task is obsolete, duplicate, or based on a wrong premise.
 
-## Task Card Requirements
+## Task Card Contract
 
-Every task card must carry these fields near the top:
+Required fields near the top:
 
 - `ID`
 - `Title`
@@ -69,32 +59,104 @@ Every task card must carry these fields near the top:
 - `Created At`
 - `Updated At`
 
-Every task card must also contain these sections:
+Required sections:
 
 - `User Prompt`
 - `Context Snapshot`
 - `Delivery Notes`
 - `Review Record`
 
-The `User Prompt` section is the core contract. It should read like a clear instruction from a human operator to a strong but non-omniscient engineer.
+Field semantics:
+
+- `Depends On` is for hard sequencing requirements.
+- `Related Tasks` is for non-blocking links that affect reasoning.
+- `Blocked By` must name the concrete blocker, not a vague statement.
+- `User Prompt` must read as a direct instruction from a human operator.
+
+## Role Contracts
+
+### Producer Round
+
+Round objective:
+
+- create at most one new actionable task card, or
+- append one no-growth note to `notes.md` with a concrete reason.
+
+Required steps:
+
+1. Read `contract.md`, `context.md`, `index.md`, and `notes.md`.
+2. Inspect repository reality before deciding queue changes.
+3. Prefer refining task relations over creating overlapping work.
+4. If creating a task, create exactly one `PT-<date>-<random>.md` from template, set `Status: TODO`, write a concrete `User Prompt`, and update `index.md` in the same round.
+5. If not creating a task, append a dated reason to `notes.md`.
+6. If queue artifacts changed meaningfully, checkpoint with `$git-safe`.
+
+Producer constraints:
+
+- Do not implement product code.
+- Do not create speculative wishlist tasks.
+- Do not create more than one new task card per round.
+
+### Consumer Round
+
+Round objective:
+
+- execute one actionable `TODO` task end to end, then hand the decision to review.
+
+Required steps:
+
+1. Read `contract.md`, `context.md`, `index.md`, and `notes.md`.
+2. Select one actionable `TODO` task with no unmet hard dependency.
+3. Claim it by setting `Status: DOING` in both the task card and `index.md`.
+4. Implement within declared scope, or record scope spillover explicitly.
+5. Run the task validation path, or document exactly why it could not run.
+6. Run review in the same round and let review decide the final state.
+7. If queue or code changed meaningfully, checkpoint with `$git-safe`.
+
+Consumer constraints:
+
+- Do not pick multiple tasks in one round.
+- Do not mark `DONE` without review evidence.
+- Do not hide dependency discoveries or relation updates.
+
+### Review Round
+
+Round objective:
+
+- accept or reject closure quality with evidence.
+
+Required steps:
+
+1. Re-read the task card contract: `Repo Scope`, `Validation`, `Exit Criteria`, relations.
+2. Inspect changed files and validation evidence against the card.
+3. Choose exactly one outcome: `DONE`, `TODO`, `BLOCKED`, or `DROP`.
+4. Write rationale and evidence into `Review Record`.
+5. Sync final status in both the task card and `index.md`.
+6. Append reusable cross-task facts to `notes.md` when relevant.
+
+Review constraints:
+
+- No rubber-stamping.
+- No `DONE` with missing or contradictory validation evidence.
+- No queue and card status divergence.
 
 ## Queue Quality Rules
 
-- A good task fits one focused consumer round.
-- Prefer one primary repo slice, one main validation path, and one intended checkpoint.
-- Tasks must explain why they matter to the parent goal.
-- Links between tasks should be explicit. Use `Depends On` for hard ordering and `Related Tasks` for softer connections.
-- Do not generate speculative backlog just because the queue looks small.
+- One task should fit one focused consumer round.
+- Prefer one main repo slice, one primary validation path, and one intended checkpoint.
+- Explain why the task matters to `Parent Goal`.
+- Keep dependency links explicit.
+- Keep backlog density high; avoid speculative growth.
 
 ## Concurrency and Git
 
-- The safe operating model is two separate worktrees or clones, not two long-running agents inside one mutable worktree.
-- Treat git history plus the `.agents/prompt-tasks/tasks/` directory as the shared synchronization layer.
-- Both producer and consumer should finalize meaningful queue or code checkpoints with the local `git-safe` skill.
-- Only resolve conflicts that belong to the current checkpoint. If a conflict is unrelated or changes task semantics, stop and report instead of guessing.
+- Preferred operating model: separate producer and consumer worktrees.
+- Shared synchronization layer: git history plus `.agents/prompt-tasks/tasks/`.
+- Resolve only conflicts related to the current checkpoint.
+- If a conflict changes task semantics and cannot be resolved confidently, stop and report.
 
-## Human Intervention
+## Human Override
 
-- Humans may create, edit, reorder, or drop tasks at any time.
-- A human rewrite of a task card or `context.md` is authoritative.
-- If human edits conflict with the current round, preserve the new human intent and narrow the round accordingly.
+- Humans may edit queue order, card content, priorities, and statuses at any time.
+- Human edits to task cards or `context.md` are authoritative.
+- If human edits conflict with an in-flight round, preserve human intent and narrow the round scope.

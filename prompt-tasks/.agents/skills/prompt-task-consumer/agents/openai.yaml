@@ -1,4 +1,4 @@
 interface:
   display_name: "Prompt Task Consumer"
   short_description: "Implement one queue task and send it through review"
-  default_prompt: "Use $prompt-task-consumer to claim one TODO task, implement it, validate it, and let review decide the final state."
+  default_prompt: "Use $prompt-task-consumer for one round: claim one actionable TODO, implement and validate it, then hand final status to $task-review."
