@@ -71,7 +71,6 @@ prompt-tasks/
     │   ├── task-review/
     │   └── git-safe/
     ├── scripts/
-    │   ├── bootstrap-worktrees.sh
     │   ├── run-producer-loop.sh
     │   ├── run-consumer-loop.sh
     │   └── run-pair.sh
@@ -85,13 +84,13 @@ prompt-tasks/
 
 ## Safe Runtime Model
 
-Running two loops against the exact same working tree is fragile. Both agents need the same `.agents/tasks/` directory, but they do not need the same live filesystem instance.
+Running two loops against the exact same checkout directory is fragile. Both agents need the same `.agents/tasks/` directory, but they do not need the same live filesystem instance.
 
 The recommended model is:
 
-1. create two worktrees or clones of the same repository
-2. run the producer loop in one worktree
-3. run the consumer loop in the other worktree
+1. create two separate checkouts or local clones of the same repository
+2. run the producer loop in one checkout
+3. run the consumer loop in the other checkout
 4. use the shared git history plus `.agents/tasks/` files as the durable synchronization layer
 
 This is why `prompt-tasks` includes a git finalization skill that stages the intended checkpoint, syncs linearly, and only resolves conflicts that are genuinely part of the current task.
@@ -104,31 +103,25 @@ Copy `.agents/` into your target project repository:
 cp -R /path/to/dot.agents/prompt-tasks/.agents /path/to/target-project/.agents
 ```
 
-Then run in the target project root:
+Create two separate local copies of the target repository, and make sure both contain the same `.agents/` directory. Then run the producer loop in one copy:
 
 ```bash
-.agents/scripts/bootstrap-worktrees.sh
-```
-
-Then run the producer loop in the producer worktree:
-
-```bash
-cd ../<repo-name>-producer
+cd /path/to/target-project-producer
 .agents/scripts/run-producer-loop.sh
 ```
 
-And the consumer loop in the consumer worktree:
+And the consumer loop in the other copy:
 
 ```bash
-cd ../<repo-name>-consumer
+cd /path/to/target-project-consumer
 .agents/scripts/run-consumer-loop.sh
 ```
 
-Or launch both after you set two distinct worktree paths:
+Or launch both after you set two distinct checkout paths:
 
 ```bash
-PRODUCER_WORKDIR=../<repo-name>-producer \
-CONSUMER_WORKDIR=../<repo-name>-consumer \
+PRODUCER_WORKDIR=/path/to/target-project-producer \
+CONSUMER_WORKDIR=/path/to/target-project-consumer \
 .agents/scripts/run-pair.sh
 ```
 

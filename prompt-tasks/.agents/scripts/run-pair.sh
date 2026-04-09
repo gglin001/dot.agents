@@ -6,12 +6,12 @@ PRODUCER_WORKDIR=${PRODUCER_WORKDIR:-}
 CONSUMER_WORKDIR=${CONSUMER_WORKDIR:-}
 
 if [ -z "$PRODUCER_WORKDIR" ] || [ -z "$CONSUMER_WORKDIR" ]; then
-  echo "Set PRODUCER_WORKDIR and CONSUMER_WORKDIR to two distinct repository worktrees."
+  echo "Set PRODUCER_WORKDIR and CONSUMER_WORKDIR to two distinct repository directories."
   exit 1
 fi
 
 if [ "$PRODUCER_WORKDIR" = "$CONSUMER_WORKDIR" ]; then
-  echo "Producer and consumer must not share the same live worktree."
+  echo "Producer and consumer must not share the same live checkout."
   exit 1
 fi
 
