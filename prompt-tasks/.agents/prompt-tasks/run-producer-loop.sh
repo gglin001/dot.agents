@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-
 set -eu
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 HARNESS_ROOT="$SCRIPT_DIR"
 PROMPT_FILE="$HARNESS_ROOT/producer.md"
 LOG_DIR=${LOG_DIR:-"$HARNESS_ROOT/debug"}
-LOG_FILE=${LOG_FILE:-"$LOG_DIR/producer.log"}
+RUN_ID=${RUN_ID:-"$(date +"%Y%m%d-%H%M%S")-$$"}
+LOG_FILE=${LOG_FILE:-"$LOG_DIR/producer-${RUN_ID}.log"}
 CODEX_BIN=${CODEX_BIN:-codex}
-ROUNDS=${ROUNDS:-50}
+ROUNDS=${ROUNDS:-10}
 SLEEP_SECONDS=${SLEEP_SECONDS:-20}
 
 mkdir -p "$LOG_DIR"
