@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Safe"
+  short_description: "Checkpoint one prompt-task change set safely"
+  default_prompt: "Use $git-safe to stage the intended prompt-task files, commit once, sync linearly, and push without force."
