@@ -1,5 +1,12 @@
 # Repository Guidelines
 
+## Markdown Output Guidelines
+
+- When using Markdown, always leave one blank line after any heading (# / ## / ###) before writing the body text or a list.
+- When writing Markdown, always insert a blank line between a paragraph ending with a colon (e.g., `...:`) and the following list.
+- Always use half-width (ASCII) punctuation marks (e.g., `,`, `.`, `!`, `?`, `:`) and strictly avoid full-width punctuation marks (e.g., `，`, `。`, `！`, `？`, `：`), even when outputting text in Chinese or other CJK languages.
+- Always ensure there is a single space after any half-width punctuation mark (e.g., `你好, 世界` instead of `你好,世界`).
+
 ## Workspace Hygiene and `.gitignore` Policy
 
 - Keep `.gitignore` narrow and targeted; do not switch to a deny-all whitelist pattern unless explicitly requested.
