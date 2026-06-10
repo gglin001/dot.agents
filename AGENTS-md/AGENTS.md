@@ -1,4 +1,4 @@
-# Repository Guidelines
+# Common Guidelines
 
 ## Markdown Output Guidelines
 
