@@ -1,73 +1,23 @@
-# dot.agents Operating Contract
+# Common Guidelines
 
-This repository is a collection of harness experiments. Every subproject should be maintainable on its own, while sharing a consistent philosophy across the repo.
+## Markdown Output Guidelines
 
-## Core Philosophy
+- When using Markdown, always leave one blank line after any heading (# / ## / ###) before writing the body text or a list.
+- When writing Markdown, always insert a blank line between a paragraph ending with a colon (e.g., `...:`) and the following list.
+- Apply these rules to all Markdown-formatted output, not only Markdown written to files. This includes ordinary TUI/chat output.
+- In Markdown text, use file paths relative to the working directory instead of absolute paths. For example, use `AGENTS-md/AGENTS.md` instead of `/repos/dot.agents/AGENTS-md/AGENTS.md`.
+- Always use half-width (ASCII) punctuation marks (e.g., `,`, `.`, `!`, `?`, `:`) and strictly avoid full-width punctuation marks (e.g., `，`, `。`, `！`, `？`, `：`), even when outputting text in Chinese or other CJK languages.
+- Always ensure there is a single space after any half-width punctuation mark (e.g., `你好, 世界` instead of `你好,世界`).
 
-- Prefer explicit contracts over implicit behavior.
-- Make autonomous loops deterministic at clear boundaries.
-- Separate role responsibilities when role split improves reliability.
-- Keep each harness practical for real repository operation, not demo-only.
-- Treat human edits as authoritative intent.
+## Workspace Hygiene and `.gitignore` Policy
 
-## Repository Scope
+- Keep `.gitignore` narrow and targeted; do not switch to a deny-all whitelist pattern unless explicitly requested.
+- `.gitignore` only affects Git tracking, so agents may still read ignored files, including relevant code under `third_party/` and safe symlinked contents.
+- When searching under `third_party/`, prefer `rg -u` or `rg -uL` so `.gitignore` rules and symlinks do not hide relevant files.
+- Put disposable scripts and outputs in `debug_agent/` instead of broadening ignore rules.
 
-The root repository exists to host and evolve multiple harness patterns:
+## Agent Scratch Workflow
 
-- `autonomous-loop`: state-driven loop where the agent decides next moves from durable state and repository evidence.
-- `prompt-tasks`: task-driven loop where a producer writes one concrete task prompt and a consumer executes one task with review.
-
-Each harness must preserve its own local semantics. Do not force a single runtime model across all subprojects.
-
-## Subproject Contract
-
-Each subproject must provide these artifacts:
-
-- `README.md` with purpose, runtime model, and quick start.
-- `.agents/` with runnable prompts, skills, and any harness-local scripts or metadata.
-- Clear durable state location for the loop model used by that subproject.
-
-Each subproject should also satisfy:
-
-- Running instructions are executable without hidden setup assumptions.
-- Paths and examples are written from the intended CWD for that harness.
-- Safety constraints are explicit, especially around git and concurrent agents.
-
-## Documentation Rules
-
-- Root `README.md` is an index and comparison view, not a full operator manual for each harness.
-- Subproject `README.md` is the canonical operator manual for that harness.
-- If a behavior rule is runtime-critical, store it under that harness `.agents/` tree so copied harnesses keep their contract.
-- Avoid duplicate contracts spread across multiple files unless one file is explicitly a short index pointer.
-
-## Change Workflow
-
-When adding or modifying a harness, keep changes scoped and verifiable:
-
-1. Update the harness files under its own directory first.
-2. Update the harness `README.md` so operators can run the latest layout.
-3. Update root `README.md` if experiment positioning changed.
-4. Validate scripts with syntax checks and run the smallest meaningful command path.
-5. Record any breaking path or contract migration clearly in docs.
-
-## New Harness Checklist
-
-Before considering a new subproject ready:
-
-- The harness has a clear loop boundary and status model.
-- The harness can run from a documented CWD with explicit paths.
-- Required `.agents` files are present and referenced correctly.
-- Quick start steps are complete enough for another operator to run.
-- Safety model for git, conflicts, and concurrency is documented.
-
-## Maintenance Guardrails
-
-- Do not silently change a harness contract that existing prompts depend on.
-- Do not move runtime-critical files without updating all references in prompts, skills, scripts, and docs.
-- Prefer additive migrations with transitional notes when structure changes are large.
-- Keep examples realistic and aligned with current file layout.
-
-## Human Override
-
-- Human maintainers may edit contracts, priorities, and structure at any time.
-- If instructions conflict, prefer the most local harness contract unless a human explicitly sets a repo-wide override.
+- For debugging, repro, validation, or inspection, prefer saving helper scripts, fixtures, and outputs under `debug_agent/` and running them from there.
+- Use descriptive names such as `debug_agent/repro_matmul_stride.py`, and keep useful scratch artifacts during the task so the workflow stays visible and reproducible.
+- `python - <<'PY'` is a discouraged style example; reserve inline heredocs or one-liners for truly tiny throwaway commands, and otherwise default to saved files in `debug_agent/`.

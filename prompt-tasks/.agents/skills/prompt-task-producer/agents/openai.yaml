@@ -1,4 +1,0 @@
-interface:
-  display_name: "Prompt Task Producer"
-  short_description: "Turn repo evidence into one concrete user-prompt task card"
-  default_prompt: "Use $prompt-task-producer for one round: follow contract rules, create at most one TODO task card, or write a no-growth queue note."
