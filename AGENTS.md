@@ -1,5 +1,12 @@
 # Common Guidelines
 
+## Goal-First Execution
+
+- Avoid unnecessary conservatism. Bias toward decisive, goal-driven changes when the user asks for refactoring, restructuring, migration, or similar broad work.
+- Keep the overall objective and intended end state as the primary focus. Make the coordinated cross-file changes needed to reach that end state instead of stopping at narrow local tweaks.
+- Do not spend disproportionate time on small style polish, micro-optimizations, or incidental cleanup unless they materially advance, unblock, or protect the main goal.
+- When tradeoffs appear, prefer momentum toward the requested outcome over perfecting low-impact details, while still preserving correctness, tests, and user-stated constraints.
+
 ## Markdown Output Guidelines
 
 - When using Markdown, always leave one blank line after any heading (# / ## / ###) before writing the body text or a list.
