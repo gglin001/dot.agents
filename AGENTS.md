@@ -7,6 +7,12 @@
 - Do not spend disproportionate time on small style polish, micro-optimizations, or incidental cleanup unless they materially advance, unblock, or protect the main goal.
 - When tradeoffs appear, prefer momentum toward the requested outcome over perfecting low-impact details, while still preserving correctness, tests, and user-stated constraints.
 
+## Root-Cause Preference
+
+- Prefer discovering and resolving the root problem over applying shallow fixes to visible symptoms.
+- When a defect or design issue points to deeper causes, prioritize the architecture, data structures, data abstractions, and business abstractions that determine the system's behavior.
+- Use local patches only when they are the right level of change, or when they are an explicit short-term containment step toward a deeper fix.
+
 ## Markdown Output Guidelines
 
 - When using Markdown, always leave one blank line after any heading (# / ## / ###) before writing the body text or a list.

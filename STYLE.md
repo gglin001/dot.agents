@@ -6,6 +6,7 @@ This style is for Codex-driven engineering work. It favors direct progress towar
 
 - Treat the requested end state as the main constraint. For refactors, migrations, cleanups, and architecture work, make the coordinated changes needed to reach that state.
 - Prefer correct architecture over low-risk patching. If the current structure conflicts with the target design, reshape the structure instead of hiding the problem behind local fixes.
+- Prefer root-cause fixes over surface-level symptom patches. When the problem is structural, work at the level of architecture, data structures, data abstractions, or business abstractions before reaching for narrow local edits.
 - Keep implementation simple, clear, and direct. Add abstraction only when it removes real complexity or expresses a stable boundary.
 - Remove obsolete code paths, fallback branches, mock modes, stale wrappers, and outdated tests when they no longer serve the target design.
 - Preserve correctness, tests, and user-stated constraints while avoiding unnecessary conservatism.
